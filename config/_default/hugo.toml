@@ -20,7 +20,21 @@ paginate = 5
     weight = 3
 
 [params]
+    comments= "page"
     contentTypeName = "posts"
     showReadingTime = true
     pygmentsCodeFences = true
     pygmentsUseClasses = true
+
+[params.giscus]
+    repo = "joshwright10/joshwright10.github.io"
+    repoID = "MDEwOlJlcG9zaXRvcnkxOTYwODUyODY="
+    category = "Announcements"
+    categoryID = "DIC_kwDOC7AGJs4CUzdm"
+    mapping = "url"
+    reactionsEnabled = "1"
+    emitMetadata = "0"
+    inputPosition = "bottom"
+    theme = "light"
+    lang = "en"
+    loading = "lazy"
