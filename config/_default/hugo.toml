@@ -16,7 +16,7 @@ paginate = 5
 
 [[menu.main]]
     name = "About"
-    url = "/about"
+    url = "/page/about"
     weight = 3
 
 [[menu.main]]
@@ -25,11 +25,17 @@ paginate = 5
     weight = 3
 
 [params]
+    mainSections = ["post","posts"]
+    logo = "img/logo.png"
+    favicon = "img/favicon.ico"
+    dateFormat = "January 2, 2006"
     comments= "page"
     contentTypeName = "posts"
-    showReadingTime = true
+    readingTime = true
+    showRelatedPosts = true
     pygmentsCodeFences = true
     pygmentsUseClasses = true
+    disclaimerText = "The opinions expressed herein are my own personal opinions and do not represent my employer’s view in any way."
 
 [params.giscus]
     repo = "joshwright10/joshwright10.github.io"
