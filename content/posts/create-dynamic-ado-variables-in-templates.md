@@ -1,7 +1,8 @@
 ---
 title: "Create Dynamic Azure DevOps Variable Insertion when using Templates"
-date: 2023-03-06T21:38:43+01:00
+date: 2023-03-06
 draft: false
+tags: ["azure-devops", "pipeline"]
 ---
 There are scenarios where it might be useful to call a template and have that template define variables dynamically based on the provided parameters.
 The main use case I have seen for this is when the [Replace Tokens](https://marketplace.visualstudio.com/items?itemName=qetza.replacetokens) Azure DevOps Task is called.
@@ -19,7 +20,7 @@ In order to avoid defining many different variables in your pipeline template, i
 Below you can see a sample Azure Pipeline template and the calling pipeline.
 Many steps have been omitted to stay focused. 
 
-````yaml
+```yaml
 # template.yaml
 parameters:
   - name: aksResourceGroup
@@ -50,11 +51,11 @@ stages:
                 **/*.yml
                 **/*.yaml
               actionOnMissing: "fail"
-````
+```
 
 This is what the calling pipeline would look like. Here we are asking the template to generate the variables `AppDynamicsTier` and `LogLevel` with their respective values.
 
-````yaml
+```yaml
 # deploy_to_aks.yaml
 stages:
   - template: template.yaml
@@ -65,7 +66,7 @@ stages:
       additionalVariables:
         AppDynamicsTier: DEV01
         LogLevel: Debug
-````
+```
 
 This simple approach of adding an object parameter and the special `${{ insert }}` syntax to the template can make it much for flexible.
 
