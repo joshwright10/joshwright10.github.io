@@ -19,6 +19,11 @@ paginate = 5
     url = "/about"
     weight = 3
 
+[[menu.main]]
+    name = "Tags"
+    url = "tags"
+    weight = 3
+
 [params]
     comments= "page"
     contentTypeName = "posts"
