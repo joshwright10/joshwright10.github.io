@@ -98,15 +98,15 @@ Case 6 is the real-world replacement scenario, so here it is step by step:
 
 ```mermaid
 flowchart TB
-    S1["Start\nGroup: a (primary) + b\nResourceId = a"]
-    S2["Failover\nGroup: b (primary) + a\nResourceId = a"]
-    S3["Replace a with c\nGroup: b (primary) + c\nServer a deleted\nResourceId = a"]
-    S4["Failover\nGroup: c (primary) + b\nResourceId = a"]
+    S1["Start<br/>Group: a (primary) + b<br/>ResourceId = a"]
+    S2["Failover<br/>Group: b (primary) + a<br/>ResourceId = a"]
+    S3["Replace a with c<br/>Group: b (primary) + c<br/>Server a deleted<br/>ResourceId = a"]
+    S4["Failover<br/>Group: c (primary) + b<br/>ResourceId = a"]
 
     S1 -->|"indexer signs in to a ✅"| S2
     S2 -->|"indexer signs in to b ✅"| S3
     S3 -->|"indexer signs in to b ✅"| S4
-    S4 -->|"indexer signs in to c ✅"| E["ResourceId never changed\nand never mattered"]
+    S4 -->|"indexer signs in to c ✅"| E["ResourceId never changed<br/>and never mattered"]
 ```
 
 ### You Cannot Remove ResourceId

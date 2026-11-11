@@ -11,6 +11,9 @@ export default defineConfig({
   trailingSlash: 'ignore',
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: ['mermaid'],
+    },
   },
   markdown: {
     remarkPlugins: [remarkMermaid, remarkAlert],
@@ -18,18 +21,18 @@ export default defineConfig({
   integrations: [
     expressiveCode({
       themes: ['github-light-default', 'github-dark-default'],
-      themeCssSelector: (theme) => {
-        if (theme.name === 'github-dark-default') {
-          return '[data-theme="dark"]';
-        }
-        return '[data-theme="light"], :root:not([data-theme="dark"])';
+      useDarkModeMediaQuery: false,
+      themeCssSelector: (theme) =>
+        `[data-theme="${theme.name.includes('dark') ? 'dark' : 'light'}"]`,
+      defaultProps: {
+        wrap: true,
       },
       styleOverrides: {
         borderRadius: '0.5rem',
         borderWidth: '1px',
         borderColor: 'var(--border-subtle)',
         codeFontFamily: 'var(--font-mono)',
-        codeFontSize: '0.865rem',
+        codeFontSize: '0.85rem',
         uiFontFamily: 'var(--font-sans)',
         frames: {
           frameBoxShadowCssValue: 'none',

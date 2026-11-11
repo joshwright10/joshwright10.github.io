@@ -58,7 +58,10 @@ code, pre, kbd, samp {
   color: var(--text-secondary);
   font-size: 1.0625rem;
   line-height: 1.75;
-  max-width: 70ch;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: break-word;
 }
 
 .studio-prose > * + * {
@@ -256,6 +259,12 @@ code, pre, kbd, samp {
 .studio-prose .expressive-code,
 .studio-prose .mermaid-wrapper {
   margin: 2rem 0;
+  max-width: 100%;
+}
+
+.studio-prose pre {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 /* Mermaid interactive controls */
