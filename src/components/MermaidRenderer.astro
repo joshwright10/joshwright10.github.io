@@ -31,6 +31,12 @@
       securityLevel: 'strict' as const,
       theme: 'base' as const,
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+      flowchart: {
+        htmlLabels: true,
+        wrappingWidth: 320,
+        padding: 14,
+        curve: 'basis' as const,
+      },
       themeVariables: isLight
         ? {
             background: '#ffffff',
