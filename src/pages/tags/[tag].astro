@@ -1,12 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
+import { getVisiblePosts } from '../../utils/posts';
+import { withBase } from '../../utils/paths';
 
 export async function getStaticPaths() {
-  const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
-    (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-  );
+  const posts = await getVisiblePosts();
 
   const uniqueTags = new Set<string>();
   for (const post of posts) {
@@ -32,7 +31,7 @@ const { tag, posts } = Astro.props;
     <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
       <div class="mb-4">
         <a
-          href="/tags/"
+          href={withBase('/tags/')}
           class="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)]"
         >
           ← All topics
@@ -61,6 +60,7 @@ const { tag, posts } = Astro.props;
             description={post.data.description}
             tags={post.data.tags}
             body={post.body || ''}
+            draft={post.data.draft}
           />
         ))
       }

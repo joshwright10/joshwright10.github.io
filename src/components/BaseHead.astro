@@ -1,4 +1,6 @@
 ---
+import { withBase } from '../utils/paths';
+
 interface Props {
   title: string;
   description?: string;
@@ -21,15 +23,15 @@ const fullTitle = title === 'DevOps Field Notes' ? `${title} — Josh Wright` : 
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
 <meta name="generator" content={Astro.generator} />
 <link rel="canonical" href={canonicalURL} />
-<link rel="sitemap" href="/sitemap-index.xml" />
+<link rel="sitemap" href={withBase('/sitemap-index.xml')} />
 <link
   rel="alternate"
   type="application/rss+xml"
   title="DevOps Field Notes RSS Feed"
-  href={new URL('rss.xml', Astro.site)}
+  href={new URL(withBase('/rss.xml'), Astro.site)}
 />
 
 <!-- Fonts: Inter & JetBrains Mono -->

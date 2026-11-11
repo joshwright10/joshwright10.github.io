@@ -1,4 +1,6 @@
 ---
+import { withBase } from '../utils/paths';
+
 interface Props {
   slug: string;
   title: string;
@@ -7,9 +9,19 @@ interface Props {
   tags?: string[];
   body?: string;
   featured?: boolean;
+  draft?: boolean;
 }
 
-const { slug, title, date, description, tags = [], body = '', featured = false } = Astro.props;
+const {
+  slug,
+  title,
+  date,
+  description,
+  tags = [],
+  body = '',
+  featured = false,
+  draft = false,
+} = Astro.props;
 
 const wordCount = body.trim().split(/\s+/).filter(Boolean).length;
 const readingMinutes = Math.max(1, Math.ceil(wordCount / 215));
@@ -47,18 +59,23 @@ const primaryTopics = tags.slice(0, 3).map((t) => t.replace(/-/g, ' '));
   ]}
 >
   <div>
-    {
-      primaryTopics.length > 0 && (
-        <div class="mb-2.5 flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wider text-[var(--accent-primary)]">
-          {primaryTopics.map((topic, idx) => (
-            <>
-              {idx > 0 && <span class="text-[var(--border-hover)]">·</span>}
-              <span>{topic}</span>
-            </>
-          ))}
-        </div>
-      )
-    }
+    <div class="mb-2.5 flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wider text-[var(--accent-primary)]">
+      {
+        draft && (
+          <span class="rounded bg-amber-500/15 px-2 py-0.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-300">
+            Draft Preview
+          </span>
+        )
+      }
+      {
+        primaryTopics.map((topic, idx) => (
+          <>
+            {idx > 0 && <span class="text-[var(--border-hover)]">·</span>}
+            <span>{topic}</span>
+          </>
+        ))
+      }
+    </div>
 
     <h2
       class:list={[
@@ -66,7 +83,7 @@ const primaryTopics = tags.slice(0, 3).map((t) => t.replace(/-/g, ' '));
         featured ? 'text-2xl sm:text-3xl lg:text-[2.15rem] leading-[1.2]' : 'text-xl sm:text-[1.35rem] leading-[1.3]',
       ]}
     >
-      <a href={`/posts/${slug}/`} class="focus:outline-none">
+      <a href={withBase(`/posts/${slug}/`)} class="focus:outline-none">
         {title}
       </a>
     </h2>

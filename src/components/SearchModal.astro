@@ -1,9 +1,8 @@
 ---
-import { getCollection } from 'astro:content';
+import { getVisiblePosts } from '../utils/posts';
+import { withBase } from '../utils/paths';
 
-const allPosts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-);
+const allPosts = await getVisiblePosts();
 
 const searchIndex = allPosts.map((post) => ({
   slug: post.id,
@@ -11,7 +10,8 @@ const searchIndex = allPosts.map((post) => ({
   description: post.data.description || '',
   date: post.data.date.toISOString().slice(0, 10),
   tags: post.data.tags || [],
-  url: `/posts/${post.id}/`,
+  draft: Boolean(post.data.draft),
+  url: withBase(`/posts/${post.id}/`),
 }));
 ---
 
@@ -81,7 +81,9 @@ const searchIndex = allPosts.map((post) => ({
           (item) => `
           <a href="${item.url}" class="block py-3 px-2 transition hover:bg-[var(--bg-surface)] group">
             <div class="flex items-baseline justify-between gap-3">
-              <span class="text-sm font-medium text-[var(--text-primary)] group-hover:text-[var(--accent-primary)]">${item.title}</span>
+              <span class="text-sm font-medium text-[var(--text-primary)] group-hover:text-[var(--accent-primary)]">
+                ${item.draft ? '[Draft] ' : ''}${item.title}
+              </span>
               <span class="font-mono text-xs text-[var(--text-muted)] shrink-0">${item.date}</span>
             </div>
             <div class="mt-1 flex flex-wrap gap-2 text-xs text-[var(--text-muted)]">

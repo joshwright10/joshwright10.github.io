@@ -7,6 +7,7 @@ import { remarkMermaid } from './src/plugins/remark-mermaid.mjs';
 
 export default defineConfig({
   site: 'https://joshwright10.github.io',
+  base: process.env.BASE_PATH || '/',
   output: 'static',
   trailingSlash: 'ignore',
   vite: {

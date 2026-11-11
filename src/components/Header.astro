@@ -1,15 +1,21 @@
 ---
+import { withBase } from '../utils/paths';
+
 const pathname = Astro.url.pathname;
-const isBlog = pathname === '/' || pathname.startsWith('/posts');
-const isTags = pathname.startsWith('/tags');
-const isAbout = pathname.startsWith('/page/about');
+const homeHref = withBase('/');
+const tagsHref = withBase('/tags/');
+const aboutHref = withBase('/page/about/');
+
+const isBlog = pathname === homeHref || pathname.includes('/posts/');
+const isTags = pathname.includes('/tags');
+const isAbout = pathname.includes('/page/about');
 ---
 
 <header class="w-full border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]">
   <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-    <!-- Brand (Tailscale-inspired dot grid mark + clean typography) -->
+    <!-- Brand -->
     <div class="flex items-center gap-8">
-      <a href="/" class="group flex items-center gap-3 text-[var(--text-primary)]">
+      <a href={homeHref} class="group flex items-center gap-3 text-[var(--text-primary)]">
         <svg class="h-5 w-5 text-[var(--text-primary)]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <circle cx="3.5" cy="3.5" r="2" opacity="0.35" />
           <circle cx="10" cy="3.5" r="2" />
@@ -28,7 +34,7 @@ const isAbout = pathname.startsWith('/page/about');
 
       <nav class="hidden sm:flex items-center gap-6" aria-label="Primary Navigation">
         <a
-          href="/"
+          href={homeHref}
           class:list={[
             'text-sm font-medium transition-colors',
             isBlog
@@ -39,7 +45,7 @@ const isAbout = pathname.startsWith('/page/about');
           Blog
         </a>
         <a
-          href="/tags/"
+          href={tagsHref}
           class:list={[
             'text-sm font-medium transition-colors',
             isTags
@@ -50,7 +56,7 @@ const isAbout = pathname.startsWith('/page/about');
           Topics
         </a>
         <a
-          href="/page/about/"
+          href={aboutHref}
           class:list={[
             'text-sm font-medium transition-colors',
             isAbout
@@ -66,9 +72,9 @@ const isAbout = pathname.startsWith('/page/about');
     <!-- Right Controls -->
     <div class="flex items-center gap-3">
       <nav class="flex sm:hidden items-center gap-4 mr-1" aria-label="Mobile Navigation">
-        <a href="/" class="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Blog</a>
-        <a href="/tags/" class="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Topics</a>
-        <a href="/page/about/" class="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]">About</a>
+        <a href={homeHref} class="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Blog</a>
+        <a href={tagsHref} class="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Topics</a>
+        <a href={aboutHref} class="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]">About</a>
       </nav>
 
       <button

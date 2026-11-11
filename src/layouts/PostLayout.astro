@@ -3,6 +3,7 @@ import BaseLayout from './BaseLayout.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import MermaidRenderer from '../components/MermaidRenderer.astro';
 import Giscus from '../components/Giscus.astro';
+import { withBase } from '../utils/paths';
 
 interface Heading {
   depth: number;
@@ -22,6 +23,7 @@ interface Props {
   tags?: string[];
   headings?: Heading[];
   body?: string;
+  draft?: boolean;
   prevPost?: AdjacentPost | null;
   nextPost?: AdjacentPost | null;
   relatedPosts?: AdjacentPost[];
@@ -34,6 +36,7 @@ const {
   tags = [],
   headings = [],
   body = '',
+  draft = false,
   prevPost = null,
   nextPost = null,
   relatedPosts = [],
@@ -56,12 +59,12 @@ const formattedDate = date.toLocaleDateString('en-US', {
   publishedTime={date.toISOString()}
   tags={tags}
 >
-  <!-- Warm Stone Editorial Header Band (Tailscale blog article header) -->
+  <!-- Warm Stone Editorial Header Band -->
   <header class="border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]">
     <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
       <div class="mb-5">
         <a
-          href="/"
+          href={withBase('/')}
           class="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] transition hover:text-[var(--text-primary)]"
         >
           <span>←</span>
@@ -69,20 +72,25 @@ const formattedDate = date.toLocaleDateString('en-US', {
         </a>
       </div>
 
-      {
-        tags.length > 0 && (
-          <div class="mb-3 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--accent-primary)]">
-            {tags.slice(0, 4).map((tag, idx) => (
-              <>
-                {idx > 0 && <span class="text-[var(--border-hover)]">·</span>}
-                <a href={`/tags/${tag}/`} class="hover:underline">
-                  {tag.replace(/-/g, ' ')}
-                </a>
-              </>
-            ))}
-          </div>
-        )
-      }
+      <div class="mb-3 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--accent-primary)]">
+        {
+          draft && (
+            <span class="rounded bg-amber-500/15 px-2 py-0.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-300">
+              Draft Preview (Unpublished)
+            </span>
+          )
+        }
+        {
+          tags.slice(0, 4).map((tag, idx) => (
+            <>
+              {idx > 0 && <span class="text-[var(--border-hover)]">·</span>}
+              <a href={withBase(`/tags/${tag}/`)} class="hover:underline">
+                {tag.replace(/-/g, ' ')}
+              </a>
+            </>
+          ))
+        }
+      </div>
 
       <h1 class="max-w-4xl text-2xl font-semibold tracking-tight text-[var(--text-primary)] sm:text-4xl lg:text-[2.65rem] lg:leading-[1.16]">
         {title}
@@ -121,7 +129,7 @@ const formattedDate = date.toLocaleDateString('en-US', {
               <span class="mr-2 text-xs font-medium text-[var(--text-muted)]">Topics:</span>
               {tags.map((tag) => (
                 <a
-                  href={`/tags/${tag}/`}
+                  href={withBase(`/tags/${tag}/`)}
                   class="rounded border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-2.5 py-1 text-xs text-[var(--text-secondary)] transition hover:border-[var(--border-hover)] hover:text-[var(--text-primary)]"
                 >
                   {tag}
@@ -139,7 +147,7 @@ const formattedDate = date.toLocaleDateString('en-US', {
               class="mt-10 grid grid-cols-1 gap-6 border-t border-[var(--border-subtle)] pt-8 sm:grid-cols-2"
             >
               {prevPost ? (
-                <a href={`/posts/${prevPost.id}/`} class="group block">
+                <a href={withBase(`/posts/${prevPost.id}/`)} class="group block">
                   <span class="text-xs text-[var(--text-muted)]">← Previous article</span>
                   <span class="mt-1 block text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent-primary)]">
                     {prevPost.title}
@@ -150,7 +158,7 @@ const formattedDate = date.toLocaleDateString('en-US', {
               )}
 
               {nextPost && (
-                <a href={`/posts/${nextPost.id}/`} class="group block sm:text-right">
+                <a href={withBase(`/posts/${nextPost.id}/`)} class="group block sm:text-right">
                   <span class="text-xs text-[var(--text-muted)]">Next article →</span>
                   <span class="mt-1 block text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent-primary)]">
                     {nextPost.title}
@@ -172,7 +180,7 @@ const formattedDate = date.toLocaleDateString('en-US', {
                 {relatedPosts.map((rel) => (
                   <li>
                     <a
-                      href={`/posts/${rel.id}/`}
+                      href={withBase(`/posts/${rel.id}/`)}
                       class="text-sm font-medium text-[var(--text-primary)] hover:text-[var(--accent-primary)] hover:underline"
                     >
                       {rel.title}

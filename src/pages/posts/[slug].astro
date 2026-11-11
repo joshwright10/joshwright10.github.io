@@ -1,11 +1,10 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
+import { getVisiblePosts } from '../../utils/posts';
 
 export async function getStaticPaths() {
-  const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
-    (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-  );
+  const posts = await getVisiblePosts();
 
   return posts.map((post, index) => {
     const nextPost = index > 0 ? { id: posts[index - 1].id, title: posts[index - 1].data.title } : null;
@@ -36,6 +35,7 @@ const { Content, headings } = await render(post);
   tags={post.data.tags}
   headings={headings}
   body={post.body || ''}
+  draft={post.data.draft}
   prevPost={prevPost}
   nextPost={nextPost}
   relatedPosts={relatedPosts}

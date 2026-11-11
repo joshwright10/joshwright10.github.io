@@ -1,4 +1,6 @@
 ---
+import { withBase } from '../utils/paths';
+
 const year = new Date().getFullYear();
 const disclaimerText =
   "The opinions expressed herein are my own personal opinions and do not represent my employer’s view in any way.";
@@ -34,7 +36,7 @@ const disclaimerText =
           LinkedIn
         </a>
         <a
-          href="/rss.xml"
+          href={withBase('/rss.xml')}
           class="hover:text-[var(--text-primary)] hover:underline"
         >
           RSS

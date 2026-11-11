@@ -53,6 +53,15 @@ description: "Concise 1-2 sentence summary for the article header, homepage feed
 ---
 ```
 
+### Drafts & Pull Request Previews
+
+- **`draft: true` in Frontmatter:**
+  - Visible in local development (`npm run dev`) and in Pull Request preview builds (`INCLUDE_DRAFTS=true`) with a **`Draft Preview`** badge.
+  - Automatically excluded from production builds (`main` branch), RSS, and sitemap.
+- **Live PR Preview URLs (`.github/workflows/pr-preview.yml`):**
+  - Opening or updating any Pull Request builds the site with `INCLUDE_DRAFTS=true` and `BASE_PATH=/pr-preview/pr-<number>`, deploys it to `https://joshwright10.github.io/pr-preview/pr-<number>/`, and posts a comment on the PR with the live preview URL.
+  - Closing or merging the PR automatically cleans up the preview folder.
+
 ### Authoring Guidelines for AI Agents
 
 1. **Pure Markdown Only:** Do not use Hugo shortcodes (`{{< ... >}}`).
@@ -80,6 +89,7 @@ description: "Concise 1-2 sentence summary for the article header, homepage feed
 - `src/pages/tags/` — Topic archive (`/tags/` and `/tags/[tag]/`)
 - `src/pages/rss.xml.js` — RSS feed (`/rss.xml`)
 - `tests/build-verification.test.mjs` — Automated Node test runner suite verifying generated routes, Mermaid wrappers, Expressive Code frames, GA4, Giscus, and Credly badges in `dist/`
-- `.github/workflows/deploy.yml` — GitHub Actions workflow validating PR builds and deploying `./dist` to GitHub Pages on push to `main`
+- `.github/workflows/deploy.yml` — GitHub Actions workflow validating PR builds and deploying `./dist` to the `gh-pages` branch on push to `main` (preserving `/pr-preview/`)
+- `.github/workflows/pr-preview.yml` — Deploys live PR previews (including `draft: true` posts) to `https://joshwright10.github.io/pr-preview/pr-<number>/` and comments the link on the PR
 - `.github/dependabot.yml` — Weekly grouped dependency checks (`npm` and `github-actions`, Mondays at 08:00 Europe/Madrid)
 - `.github/workflows/dependabot-auto-merge.yml` — Runs `npm ci`, `npm run build`, and `npm test` on Dependabot PRs and auto-approves/merges them when verification passes
