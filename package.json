@@ -23,7 +23,7 @@
     "mermaid": "^12.3.0",
     "remark-github-blockquote-alert": "^2.1.0",
     "tailwindcss": "^4.3.5",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "unist-util-visit": "^5.2.0"
   }
 }
