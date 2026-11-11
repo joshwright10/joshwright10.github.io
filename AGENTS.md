@@ -37,6 +37,14 @@ npm run preview
 
 > **Important Dev Server Note:** Do not run `npm run build` while `npm run dev` is actively running. `astro build` rewrites `.astro/data-store.json` and `node_modules/.vite/deps` with production asset hashes, which causes a running `astro dev` instance to 404 on Expressive Code stylesheets and Vite pre-bundled dependencies until `.astro` is cleared or `npm run dev` is restarted.
 
+## Git Workflow & Branch Protection
+
+- **Protected `main` Branch (No Direct Pushes):**
+  - The `main` branch is protected with `enforce_admins: true`, `required_pull_request_reviews` enabled, and `required_status_checks` (`build`).
+  - Direct pushes to `main` are strictly blocked for all users and agents.
+  - Always create a feature/topic branch (`git checkout -b <branch-name>`), push the branch to `origin`, and open a Pull Request (`gh pr create`) targeting `main`.
+  - All PRs automatically trigger a live preview deployment (`pr-preview.yml`) and the full verification suite (`deploy.yml` `build` job) before they can be merged.
+
 ## Writing & Generating Blog Posts
 
 All blog posts live in `src/content/posts/<slug>.md` and are published at `/posts/<slug>/`.
@@ -95,7 +103,7 @@ description: "Concise 1-2 sentence summary for the article header, homepage feed
 - `src/pages/page/about.astro` — Author bio, skills, and Credly credentials (`/page/about/`)
 - `src/pages/tags/` — Topic archive (`/tags/` and `/tags/[tag]/`)
 - `src/pages/rss.xml.js` — RSS feed (`/rss.xml`)
-- `tests/build-verification.test.mjs` — Automated Node test runner suite verifying generated routes, Mermaid wrappers, Expressive Code frames, GA4, Giscus, and Credly badges in `dist/`
+- `tests/build-verification.test.mjs` — Automated Node test runner + Playwright (`playwright-core`) headless Chrome E2E suite verifying generated routes, internal links/assets, RSS/sitemap feeds, client-side Mermaid SVG rendering & lightbox controls, desktop/mobile horizontal overflow, Expressive Code frames, GA4, Giscus, and Credly badges in `dist/`
 - `.github/workflows/deploy.yml` — GitHub Actions workflow validating PR builds and deploying `./dist` to the `gh-pages` branch on push to `main` (preserving `/pr-preview/`)
 - `.github/workflows/pr-preview.yml` — Deploys live PR previews (including `draft: true` posts) to `https://joshwright10.github.io/pr-preview/pr-<number>/` and comments the link on the PR
 - `.github/dependabot.yml` — Weekly grouped dependency checks (`npm` and `github-actions`, Mondays at 08:00 Europe/Madrid)
