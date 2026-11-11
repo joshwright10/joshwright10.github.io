@@ -78,11 +78,12 @@ description: "Concise 1-2 sentence summary for the article header, homepage feed
 ### Authoring Guidelines for AI Agents
 
 1. **Pure Markdown Only:** Write standard Markdown using fenced code blocks and GitHub-style callouts.
-2. **Mermaid Diagrams:**
+2. **No Em Dashes:** Never use em dashes (`—`) in blog posts (including prose, lists, code comments, and Mermaid diagrams). Use commas, colons, parentheses, or separate sentences instead.
+3. **Mermaid Diagrams:**
    - Use standard ` ```mermaid ` code fences.
    - Use `<br/>` (not literal `\n`) for multi-line labels inside flowchart nodes or sequence diagram notes (e.g., `S1["Line 1<br/>Line 2"]`).
    - Quote node labels that contain parentheses, brackets, or special characters (e.g., `P[("sql-primary<br/>Primary")]`).
-3. **Code Snippets:**
+4. **Code Snippets:**
    - Use standard language tags (`csharp`, `yaml`, `powershell`, `bash`, `docker`, `xml`, `json`, `text`).
    - Long lines wrap automatically (`defaultProps: { wrap: true }` in `astro.config.mjs`).
 
