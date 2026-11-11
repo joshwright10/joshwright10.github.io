@@ -11,7 +11,7 @@ interface Props {
 
 const {
   title,
-  description = 'Josh Wright — Notes on building products, platforms, and cloud infrastructure.',
+  description = 'Practical writing on building software products, cloud platforms, Azure, Kubernetes, and .NET by Josh Wright.',
   type = 'website',
   publishedTime,
   tags = [],
@@ -20,7 +20,7 @@ const {
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const fullTitle =
   title === 'Josh Wright'
-    ? 'Josh Wright — Notes on building products, platforms, and cloud infrastructure'
+    ? 'Josh Wright | Product, Platform & Cloud Engineering'
     : `${title} | Josh Wright`;
 ---
 

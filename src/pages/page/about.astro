@@ -6,7 +6,7 @@ import Giscus from '../../components/Giscus.astro';
 
 <BaseLayout
   title="About me"
-  description="Josh Wright — Product builder based in Madrid with roots in Platform Engineering and DevOps."
+  description="Josh Wright, a Product Builder based in Madrid with a background in Platform Engineering, DevOps, and Azure infrastructure."
 >
   <!-- Warm Stone Masthead Band -->
   <section class="border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]">
@@ -19,7 +19,7 @@ import Giscus from '../../components/Giscus.astro';
           Josh Wright
         </h1>
         <p class="mt-4 text-base leading-relaxed text-[var(--text-secondary)] sm:text-lg">
-          My name is Josh Wright. I am a Product Builder based in Madrid (originally from the UK), with a background in Platform Engineering and DevOps.
+          I am a Product Builder based in Madrid, originally from the UK, with a background in Platform Engineering, DevOps, and cloud infrastructure.
         </p>
         <div class="mt-5 flex items-center gap-5 text-sm font-medium text-[var(--accent-primary)]">
           <a
@@ -48,51 +48,69 @@ import Giscus from '../../components/Giscus.astro';
     <div class="grid grid-cols-1 gap-12 lg:grid-cols-12">
       <div class="lg:col-span-8 space-y-10">
         <!-- Background -->
-        <section class="space-y-3">
+        <section class="space-y-4">
           <h2 class="text-lg font-semibold tracking-tight text-[var(--text-primary)]">
-            My background
+            Background
           </h2>
           <p class="text-base leading-relaxed text-[var(--text-secondary)]">
-            I come from a Network focused SysAdmin background, starting my career working in the UK Football industry, helping to maintain business systems and also stadium network infrastructure, including the odd cable re-crimping on match day.
+            I studied Forensic and Security Technologies at Sheffield Hallam University and started my career in the UK football industry at Sheffield Wednesday and Fulham FC, maintaining business systems and stadium network infrastructure (including the odd cable re-crimping on match day).
           </p>
           <p class="text-base leading-relaxed text-[var(--text-secondary)]">
-            From there I moved into DevOps and then Platform Engineering — designing cloud infrastructure, Kubernetes platforms, and developer workflows on Azure — before transitioning into building products end-to-end.
+            After moving to London, I worked across enterprise infrastructure, networking, and hybrid cloud at First State Investments and Euromoney. Relocating to Madrid, I built PowerShell automation frameworks for Fortune 500 clients at Nexthink before leading Azure platform direction, AKS migrations, and GitOps delivery for .NET workloads at Hitachi Digital Services.
+          </p>
+          <p class="text-base leading-relaxed text-[var(--text-secondary)]">
+            Today I focus on building products end to end, backed by over a decade of hands-on experience in cloud platforms, developer tooling, and distributed systems. Outside of work, I play pádel, squash, and badminton, and speak Spanish and Russian.
           </p>
         </section>
 
-        <!-- Skills & In Development -->
-        <div class="grid grid-cols-1 gap-8 border-t border-[var(--border-subtle)] pt-10 sm:grid-cols-2">
-          <section>
-            <h2 class="text-lg font-semibold tracking-tight text-[var(--text-primary)]">
-              My skills
-            </h2>
-            <ul class="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--text-secondary)]">
-              <li>PowerShell (this is where I am most comfortable writing code)</li>
-              <li>Terraform</li>
-              <li>Kubernetes</li>
-              <li>Cloud: Azure</li>
-              <li>Networking</li>
-            </ul>
-          </section>
+        <!-- Core Stack -->
+        <section class="border-t border-[var(--border-subtle)] pt-10">
+          <h2 class="text-lg font-semibold tracking-tight text-[var(--text-primary)]">
+            Core stack
+          </h2>
+          <div class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <h3 class="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+                Cloud & Infrastructure
+              </h3>
+              <p class="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">
+                Azure (AKS, App Services, Functions, Storage, Networking, Apigee, Entra ID), Terraform, Ansible, PKI
+              </p>
+            </div>
 
-          <section>
-            <h2 class="text-lg font-semibold tracking-tight text-[var(--text-primary)]">
-              In development
-            </h2>
-            <p class="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">
-              The areas that I have a keen interest in, and where I have been working to improve my skills, but am not brave enough to own them yet.
-            </p>
-            <ul class="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--text-secondary)]">
-              <li>.NET</li>
-              <li>Golang</li>
-            </ul>
-          </section>
-        </div>
+            <div>
+              <h3 class="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+                Platform & Delivery
+              </h3>
+              <p class="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">
+                Kubernetes, Argo CD, Docker, GitOps, Azure DevOps, GitHub, Helm, Kustomize, Backstage
+              </p>
+            </div>
+
+            <div>
+              <h3 class="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+                Development & Automation
+              </h3>
+              <p class="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">
+                .NET Core, ASP.NET Core, EF Core, PowerShell, Bash, YAML
+              </p>
+            </div>
+
+            <div>
+              <h3 class="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+                Observability & Quality
+              </h3>
+              <p class="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">
+                Prometheus, Grafana, Azure Monitor, SonarCloud, Checkmarx
+              </p>
+            </div>
+          </div>
+        </section>
 
         <!-- Badges -->
         <section class="border-t border-[var(--border-subtle)] pt-10">
           <h2 class="text-lg font-semibold tracking-tight text-[var(--text-primary)]">
-            My badges
+            Certifications & badges
           </h2>
           <div class="mt-6">
             <CredlyGrid />

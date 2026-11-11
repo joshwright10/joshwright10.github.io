@@ -346,7 +346,25 @@ describe('Headless Browser E2E Verification (Mermaid, Layout Overflow, Theme & S
     try {
       await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
 
-      // 1. Theme toggle switches light -> dark and persists in localStorage
+      // 1. Verify Google Analytics GA4 (G-L9PR34KNNJ) runtime initialization in browser
+      const gaState = await page.evaluate(() => {
+        const scriptTag = document.querySelector(
+          'script[src="https://www.googletagmanager.com/gtag/js?id=G-L9PR34KNNJ"]'
+        );
+        const entries = Array.isArray(window.dataLayer)
+          ? window.dataLayer.map((item) => Array.from(item))
+          : [];
+        return {
+          hasScriptTag: Boolean(scriptTag),
+          hasGtagFn: typeof window.gtag === 'function',
+          hasConfigCall: entries.some((e) => e[0] === 'config' && e[1] === 'G-L9PR34KNNJ'),
+        };
+      });
+      assert.equal(gaState.hasScriptTag, true, 'Expected GA4 gtag.js script tag in DOM');
+      assert.equal(gaState.hasGtagFn, true, 'Expected window.gtag function to be defined');
+      assert.equal(gaState.hasConfigCall, true, 'Expected dataLayer to contain config G-L9PR34KNNJ');
+
+      // 2. Theme toggle switches light -> dark and persists in localStorage
       const initialTheme = await page.getAttribute('html', 'data-theme');
       assert.equal(initialTheme, 'light');
 
