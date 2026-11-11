@@ -80,4 +80,6 @@ description: "Concise 1-2 sentence summary for the article header, homepage feed
 - `src/pages/tags/` — Topic archive (`/tags/` and `/tags/[tag]/`)
 - `src/pages/rss.xml.js` — RSS feed (`/rss.xml`)
 - `tests/build-verification.test.mjs` — Automated Node test runner suite verifying generated routes, Mermaid wrappers, Expressive Code frames, GA4, Giscus, and Credly badges in `dist/`
-- `.github/workflows/deploy.yml` — GitHub Actions workflow deploying `./dist` to GitHub Pages on push to `main`
+- `.github/workflows/deploy.yml` — GitHub Actions workflow validating PR builds and deploying `./dist` to GitHub Pages on push to `main`
+- `.github/dependabot.yml` — Weekly grouped dependency checks (`npm` and `github-actions`, Mondays at 08:00 Europe/Madrid)
+- `.github/workflows/dependabot-auto-merge.yml` — Runs `npm ci`, `npm run build`, and `npm test` on Dependabot PRs and auto-approves/merges them when verification passes
