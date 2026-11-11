@@ -7,9 +7,9 @@ export async function GET(context) {
   );
 
   return rss({
-    title: 'DevOps Field Notes',
+    title: 'Josh Wright',
     description:
-      'Architecture notes, real-world experiments, and production patterns across Kubernetes, Azure, .NET, and Platform Engineering by Josh Wright.',
+      'Notes on building products, platforms, and cloud infrastructure by Josh Wright.',
     site: context.site,
     items: posts.map((post) => ({
       title: post.data.title,

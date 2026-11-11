@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repository.
 
 ## About
 
-**DevOps Field Notes** (`https://joshwright10.github.io/`) is a personal engineering blog by **Josh Wright** covering Kubernetes (AKS), Azure, Terraform, .NET, and Platform Engineering.
+**Josh Wright** (`https://joshwright10.github.io/`) is a personal engineering blog by **Josh Wright** ("Notes on building products, platforms, and cloud infrastructure") covering Product Building, Platform Engineering, DevOps, Kubernetes (AKS), Azure, Terraform, and .NET.
 
 ## Tech Stack & Design System
 

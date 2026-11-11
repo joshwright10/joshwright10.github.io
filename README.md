@@ -1,6 +1,6 @@
-# DevOps Field Notes
+# Josh Wright
 
-Personal engineering blog by **Josh Wright** covering Kubernetes, Azure, Terraform, .NET, and Platform Engineering.
+Notes on building products, platforms, and cloud infrastructure by **Josh Wright** — covering Product Engineering, Platform Engineering, DevOps, Kubernetes (AKS), Azure, Terraform, and .NET.
 
 🌐 **Read the blog:** **[https://joshwright10.github.io/](https://joshwright10.github.io/)**
 
