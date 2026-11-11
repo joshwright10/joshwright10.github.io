@@ -1,13 +1,19 @@
-# Generated files by hugo
-/public/
-/resources/_gen/
-/assets/jsconfig.json
-hugo_stats.json
+# Build output
+dist/
+.astro/
 
-# Executable may be added to repository
-hugo.exe
-hugo.darwin
-hugo.linux
+# Dependencies
+node_modules/
 
-# Temporary lock file while building
-/.hugo_build.lock
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.production
+
+# macOS
+.DS_Store

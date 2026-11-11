@@ -1,0 +1,144 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags || []) {
+    tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+  }
+}
+
+const topTags = Array.from(tagCounts.entries())
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+  .slice(0, 10);
+---
+
+<BaseLayout
+  title="DevOps Field Notes"
+  description="Architecture notes, real-world experiments, and production patterns across Kubernetes, Azure, .NET, and Platform Engineering by Josh Wright."
+>
+  <!-- Hero Section -->
+  <section class="relative mb-12 overflow-hidden rounded-3xl border border-[var(--border-subtle)] bg-[var(--bg-surface)]/90 p-6 sm:p-10 lg:p-12">
+    <div class="flex flex-wrap items-center gap-2 font-mono text-xs text-[var(--accent-secondary)]">
+      <span class="inline-block h-2 w-2 rounded-full bg-[var(--accent-secondary)] animate-pulse" />
+      <span>ENGINEERING STUDIO // FIELD NOTES</span>
+      <span class="text-[var(--text-muted)]">·</span>
+      <span class="text-[var(--text-muted)]">JOSH WRIGHT</span>
+    </div>
+
+    <h1 class="mt-4 max-w-3xl text-3xl font-bold tracking-tight text-[var(--text-primary)] sm:text-5xl lg:leading-[1.12]">
+      Production notes on <span class="text-[var(--accent-primary)]">Cloud</span>,{' '}
+      <span class="text-[var(--accent-secondary)]">Kubernetes</span> &amp; Platform Engineering.
+    </h1>
+
+    <p class="mt-4 max-w-2xl text-base leading-relaxed text-[var(--text-secondary)] sm:text-lg">
+      Deep-dive investigations, architecture diagrams, and battle-tested automation patterns from building and operating distributed systems on Azure.
+    </p>
+
+    <div class="mt-7 flex flex-wrap items-center gap-3 font-mono text-xs">
+      <a
+        href="/page/about/"
+        class="inline-flex items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-2 font-medium text-[var(--text-primary)] transition hover:border-[var(--border-hover)]"
+      >
+        <span>About Josh Wright</span>
+        <span class="text-[var(--accent-primary)]">→</span>
+      </a>
+      <a
+        href="/rss.xml"
+        class="inline-flex items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-canvas)] px-3.5 py-2 text-[var(--text-secondary)] transition hover:border-[var(--border-hover)] hover:text-[var(--text-primary)]"
+      >
+        <span>RSS Feed</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Interactive Tag Filter Bar -->
+  <section class="mb-8" aria-label="Filter articles by tag">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+      <div class="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[var(--text-muted)]">
+        <span class="inline-block h-1.5 w-1.5 rounded-full bg-[var(--accent-primary)]" />
+        <span>Published Dispatches ({posts.length})</span>
+      </div>
+      <a href="/tags/" class="font-mono text-xs text-[var(--accent-primary)] hover:underline">
+        View all {tagCounts.size} tags →
+      </a>
+    </div>
+
+    <div class="flex flex-wrap gap-2" id="tag-filter-bar">
+      <button
+        type="button"
+        data-filter-tag="all"
+        class="tag-filter-pill rounded-lg border border-[var(--accent-primary)] bg-[var(--accent-primary)]/15 px-3 py-1 font-mono text-xs font-medium text-[var(--accent-primary)] transition cursor-pointer"
+      >
+        All ({posts.length})
+      </button>
+      {
+        topTags.map(([tag, count]) => (
+          <button
+            type="button"
+            data-filter-tag={tag}
+            class="tag-filter-pill rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3 py-1 font-mono text-xs text-[var(--text-secondary)] transition hover:border-[var(--border-hover)] hover:text-[var(--text-primary)] cursor-pointer"
+          >
+            #{tag} <span class="text-[var(--text-muted)]">({count})</span>
+          </button>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Posts Grid -->
+  <section class="grid grid-cols-1 gap-6 md:grid-cols-2" id="posts-grid">
+    {
+      posts.map((post, idx) => (
+        <PostCard
+          slug={post.id}
+          title={post.data.title}
+          date={post.data.date}
+          description={post.data.description}
+          tags={post.data.tags}
+          body={post.body || ''}
+          featured={idx === 0}
+        />
+      ))
+    }
+  </section>
+
+  <script is:inline>
+    (function () {
+      const buttons = document.querySelectorAll('[data-filter-tag]');
+      const cards = document.querySelectorAll('[data-post-card]');
+
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const selected = btn.getAttribute('data-filter-tag') || 'all';
+
+          buttons.forEach((b) => {
+            const active = b.getAttribute('data-filter-tag') === selected;
+            if (active) {
+              b.className =
+                'tag-filter-pill rounded-lg border border-[var(--accent-primary)] bg-[var(--accent-primary)]/15 px-3 py-1 font-mono text-xs font-medium text-[var(--accent-primary)] transition cursor-pointer';
+            } else {
+              b.className =
+                'tag-filter-pill rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3 py-1 font-mono text-xs text-[var(--text-secondary)] transition hover:border-[var(--border-hover)] hover:text-[var(--text-primary)] cursor-pointer';
+            }
+          });
+
+          cards.forEach((card) => {
+            const cardTags = (card.getAttribute('data-tags') || '').split(',');
+            if (selected === 'all' || cardTags.includes(selected)) {
+              card.classList.remove('hidden');
+            } else {
+              card.classList.add('hidden');
+            }
+          });
+        });
+      });
+    })();
+  </script>
+</BaseLayout>

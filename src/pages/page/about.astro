@@ -1,0 +1,133 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CredlyGrid from '../../components/CredlyGrid.astro';
+import Giscus from '../../components/Giscus.astro';
+
+const coreSkills = [
+  { name: 'PowerShell', detail: 'Primary scripting & automation language' },
+  { name: 'Terraform', detail: 'Infrastructure as Code & modular cloud provisioning' },
+  { name: 'Kubernetes (AKS)', detail: 'Container orchestration, Workload Identity & cluster operations' },
+  { name: 'Cloud: Azure', detail: 'Enterprise cloud architecture, networking & security' },
+  { name: 'Networking', detail: 'Routing, DNS, private links & hybrid connectivity' },
+];
+
+const inDevelopment = [
+  { name: '.NET / C#', detail: 'Cloud-native ASP.NET services & distributed systems' },
+  { name: 'Golang', detail: 'CLI tooling & Kubernetes ecosystem development' },
+];
+---
+
+<BaseLayout
+  title="About me"
+  description="Josh Wright — DevOps & Platform Engineering Consultant based in Madrid, originally from the UK."
+>
+  <div class="space-y-12">
+    <!-- Bio Header -->
+    <section class="rounded-3xl border border-[var(--border-subtle)] bg-[var(--bg-surface)]/90 p-6 sm:p-10">
+      <div class="flex items-center gap-2 font-mono text-xs text-[var(--accent-primary)]">
+        <span class="inline-block h-2 w-2 rounded-full bg-[var(--accent-primary)]" />
+        <span>PROFILE // ENGINEER DOSSIER</span>
+      </div>
+
+      <h1 class="mt-3 text-3xl font-bold tracking-tight text-[var(--text-primary)] sm:text-4xl">
+        About me
+      </h1>
+
+      <p class="mt-4 max-w-3xl text-base leading-relaxed text-[var(--text-secondary)] sm:text-lg">
+        My name is <strong class="text-[var(--text-primary)]">Josh Wright</strong>, I am a DevOps consultant based in Madrid, but originally from the UK.
+      </p>
+
+      <div class="mt-6 flex flex-wrap gap-3 font-mono text-xs">
+        <a
+          href="https://github.com/joshwright10"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3.5 py-2 text-[var(--text-primary)] transition hover:border-[var(--border-hover)]"
+        >
+          GitHub @joshwright10 ↗
+        </a>
+        <a
+          href="https://www.linkedin.com/in/joshwright10"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3.5 py-2 text-[var(--text-primary)] transition hover:border-[var(--border-hover)]"
+        >
+          LinkedIn /in/joshwright10 ↗
+        </a>
+      </div>
+    </section>
+
+    <!-- Skills & In Development Grid -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+      <!-- Core Skills -->
+      <section class="lg:col-span-7 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6 sm:p-8">
+        <div class="font-mono text-xs font-semibold uppercase tracking-wider text-[var(--accent-primary)]">
+          01 // My Skills
+        </div>
+        <h2 class="mt-1 text-xl font-semibold text-[var(--text-primary)]">Core Stack &amp; Domains</h2>
+        <ul class="mt-5 space-y-3">
+          {
+            coreSkills.map((skill) => (
+              <li class="flex flex-col justify-between gap-1 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-canvas)]/70 p-3.5 sm:flex-row sm:items-center">
+                <span class="font-mono text-sm font-medium text-[var(--text-primary)]">{skill.name}</span>
+                <span class="text-xs text-[var(--text-secondary)]">{skill.detail}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <!-- In Development & Background -->
+      <div class="lg:col-span-5 flex flex-col gap-6">
+        <section class="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6 sm:p-8">
+          <div class="font-mono text-xs font-semibold uppercase tracking-wider text-[var(--accent-secondary)]">
+            02 // In Development
+          </div>
+          <h2 class="mt-1 text-xl font-semibold text-[var(--text-primary)]">Active Exploration</h2>
+          <p class="mt-2 text-xs leading-relaxed text-[var(--text-secondary)]">
+            The areas that I have a keen interest in, and where I have been working to improve my skills, but am not brave enough to own them yet.
+          </p>
+          <ul class="mt-4 space-y-2.5">
+            {
+              inDevelopment.map((item) => (
+                <li class="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-canvas)]/70 p-3">
+                  <div class="font-mono text-sm font-medium text-[var(--text-primary)]">{item.name}</div>
+                  <div class="mt-0.5 text-xs text-[var(--text-secondary)]">{item.detail}</div>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <section class="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6 sm:p-8">
+          <div class="font-mono text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+            03 // My Background
+          </div>
+          <h2 class="mt-1 text-xl font-semibold text-[var(--text-primary)]">Where I Started</h2>
+          <p class="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
+            I come from a Network focused SysAdmin background, starting my career working in the UK Football industry, helping to maintain business systems and also stadium network infrastructure, including the odd cable re-crimping on match day.
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <!-- Credly Certifications -->
+    <section class="rounded-3xl border border-[var(--border-subtle)] bg-[var(--bg-surface)]/80 p-6 sm:p-10">
+      <div class="mb-6 flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
+        <div>
+          <div class="font-mono text-xs font-semibold uppercase tracking-wider text-[var(--accent-primary)]">
+            04 // My Badges
+          </div>
+          <h2 class="mt-1 text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+            Certifications &amp; Verified Credentials
+          </h2>
+        </div>
+        <span class="font-mono text-xs text-[var(--text-muted)]">Verified via Credly</span>
+      </div>
+
+      <CredlyGrid />
+    </section>
+
+    <Giscus />
+  </div>
+</BaseLayout>

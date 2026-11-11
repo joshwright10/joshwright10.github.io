@@ -1,0 +1,47 @@
+<section class="mt-16 border-t border-[var(--border-subtle)] pt-10" aria-label="Comments">
+  <div class="mb-6 flex items-center justify-between">
+    <div class="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[var(--text-muted)]">
+      <span class="inline-block h-2 w-2 rounded-full bg-[var(--accent-secondary)]"></span>
+      <span>Discussion // GitHub Giscus</span>
+    </div>
+  </div>
+
+  <div class="giscus-container rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-4 sm:p-6">
+    <script
+      src="https://giscus.app/client.js"
+      data-repo="joshwright10/joshwright10.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnkxOTYwODUyODY="
+      data-category="Announcements"
+      data-category-id="DIC_kwDOC7AGJs4CUzdm"
+      data-mapping="url"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark_dimmed"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async
+      is:inline
+    ></script>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    function syncGiscusTheme(theme) {
+      const iframe = document.querySelector('iframe.giscus-frame');
+      if (!iframe || !iframe.contentWindow) return;
+      const giscusTheme = theme === 'light' ? 'light' : 'dark_dimmed';
+      iframe.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: giscusTheme } } },
+        'https://giscus.app'
+      );
+    }
+
+    window.addEventListener('studio:theme-change', (e) => {
+      syncGiscusTheme(e.detail?.theme || 'dark');
+    });
+  })();
+</script>

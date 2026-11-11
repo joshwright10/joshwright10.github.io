@@ -1,0 +1,77 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings = [] } = Astro.props;
+const filteredHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+{
+  filteredHeadings.length > 0 && (
+    <nav aria-label="Table of Contents" class="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)]/80 p-4">
+      <div class="mb-3 flex items-center gap-2 font-mono text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+        <span class="inline-block h-1.5 w-1.5 rounded-full bg-[var(--accent-primary)]" />
+        <span>On This Page</span>
+      </div>
+      <ul class="space-y-1.5 text-xs" id="toc-list">
+        {filteredHeadings.map((heading) => (
+          <li class:list={[heading.depth === 3 && 'pl-3']}>
+            <a
+              href={`#${heading.slug}`}
+              data-toc-link={heading.slug}
+              class="block rounded py-1 px-2 text-[var(--text-secondary)] transition hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] line-clamp-2"
+            >
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<script is:inline>
+  (function () {
+    const links = Array.from(document.querySelectorAll('[data-toc-link]'));
+    if (!links.length) return;
+
+    const slugs = links.map((l) => l.getAttribute('data-toc-link')).filter(Boolean);
+    const headingElements = slugs
+      .map((id) => document.getElementById(id))
+      .filter(Boolean);
+
+    function setActive(slug) {
+      links.forEach((link) => {
+        const isMatch = link.getAttribute('data-toc-link') === slug;
+        if (isMatch) {
+          link.classList.add('text-[var(--accent-primary)]', 'bg-[var(--bg-elevated)]', 'font-medium');
+          link.classList.remove('text-[var(--text-secondary)]');
+        } else {
+          link.classList.remove('text-[var(--accent-primary)]', 'bg-[var(--bg-elevated)]', 'font-medium');
+          link.classList.add('text-[var(--text-secondary)]');
+        }
+      });
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
+            break;
+          }
+        }
+      },
+      { rootMargin: '-80px 0px -70% 0px', threshold: 0.1 }
+    );
+
+    headingElements.forEach((el) => observer.observe(el));
+  })();
+</script>

@@ -2,7 +2,8 @@
 title: "Seamless NuGet Authentication to Azure DevOps Artifacts from Dockerfile"
 date: 2023-08-27
 draft: false
-tags: ["nuget", "azure-devops","dotnet", "docker", "azure-devops-artifacts", "pipeline"]
+tags: ["nuget", "azure-devops", "dotnet", "docker", "azure-devops-artifacts", "pipeline"]
+description: "Authenticate multi-stage .NET Docker builds against private Azure Artifacts NuGet feeds using the Azure Artifacts Credential Provider and pipeline job access tokens."
 ---
 When performing .NET Multi-stage builds within a Dockerfile, it may be required to restore some artifacts from an Azure DevOps Artifact Feed.
 I have previosuly seen this process being achieved by using the [Replace Tokens](https://marketplace.visualstudio.com/items?itemName=qetza.replacetokens) Azure DevOps Task to insert a PAT token into the Dockerfile during the build pipeline.

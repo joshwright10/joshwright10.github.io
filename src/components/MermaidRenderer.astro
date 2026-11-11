@@ -1,0 +1,180 @@
+<!-- Fullscreen Mermaid Lightbox Modal -->
+<div
+  id="mermaid-lightbox"
+  class="fixed inset-0 z-50 hidden flex-col bg-black/85 backdrop-blur-md p-4 sm:p-8"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Expanded Architecture Diagram"
+>
+  <div class="mx-auto flex w-full max-w-6xl items-center justify-between rounded-t-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-3">
+    <div class="flex items-center gap-2 font-mono text-xs text-[var(--text-primary)]">
+      <span class="inline-block h-2 w-2 rounded-full bg-[var(--accent-primary)]"></span>
+      <span>DIAGRAM VIEWER // FULLSCREEN</span>
+    </div>
+    <button
+      type="button"
+      id="mermaid-lightbox-close"
+      class="mermaid-btn"
+      aria-label="Close expanded diagram"
+    >
+      ESC / Close
+    </button>
+  </div>
+  <div
+    id="mermaid-lightbox-content"
+    class="mx-auto flex w-full max-w-6xl flex-1 items-center justify-center overflow-auto rounded-b-xl border border-t-0 border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6"
+  ></div>
+</div>
+
+<script>
+  function getMermaidConfig(theme: string) {
+    const isLight = theme === 'light';
+    return {
+      startOnLoad: false,
+      securityLevel: 'strict' as const,
+      theme: 'base' as const,
+      fontFamily: 'Geist, Inter, system-ui, sans-serif',
+      themeVariables: isLight
+        ? {
+            background: '#ffffff',
+            primaryColor: '#f4f4f5',
+            primaryTextColor: '#09090b',
+            primaryBorderColor: '#0284c7',
+            lineColor: '#52525b',
+            secondaryColor: '#e0f2fe',
+            tertiaryColor: '#f4f4f5',
+            clusterBkg: '#fafafa',
+            clusterBorder: '#d4d4d8',
+            actorBkg: '#f4f4f5',
+            actorBorder: '#0284c7',
+            actorTextColor: '#09090b',
+            noteBkgColor: '#e0f2fe',
+            noteTextColor: '#09090b',
+            noteBorderColor: '#0284c7',
+          }
+        : {
+            background: '#121215',
+            primaryColor: '#18181b',
+            primaryTextColor: '#fafafa',
+            primaryBorderColor: '#38bdf8',
+            lineColor: '#a1a1aa',
+            secondaryColor: '#1e293b',
+            tertiaryColor: '#18181b',
+            clusterBkg: '#09090b',
+            clusterBorder: '#27272a',
+            actorBkg: '#18181b',
+            actorBorder: '#38bdf8',
+            actorTextColor: '#fafafa',
+            signalColor: '#fafafa',
+            signalTextColor: '#fafafa',
+            noteBkgColor: '#1e293b',
+            noteTextColor: '#fafafa',
+            noteBorderColor: '#38bdf8',
+          },
+    };
+  }
+
+  async function renderAllMermaidDiagrams() {
+    const wrappers = document.querySelectorAll<HTMLElement>('.mermaid-wrapper');
+    if (!wrappers.length) return;
+
+    const { default: mermaid } = await import('mermaid');
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    mermaid.initialize(getMermaidConfig(currentTheme));
+
+    let index = 0;
+    for (const wrapper of wrappers) {
+      const encoded = wrapper.getAttribute('data-mermaid-code');
+      const canvas = wrapper.querySelector<HTMLElement>('[data-mermaid-canvas]');
+      if (!encoded || !canvas) continue;
+
+      const code = decodeURIComponent(encoded);
+      const id = `mermaid-svg-${Date.now()}-${index++}`;
+
+      try {
+        const { svg } = await mermaid.render(id, code);
+        canvas.innerHTML = svg;
+      } catch (err) {
+        console.error('Mermaid render error:', err);
+      }
+    }
+  }
+
+  function bindMermaidControls() {
+    const wrappers = document.querySelectorAll<HTMLElement>('.mermaid-wrapper');
+    const lightbox = document.getElementById('mermaid-lightbox');
+    const lightboxContent = document.getElementById('mermaid-lightbox-content');
+    const lightboxClose = document.getElementById('mermaid-lightbox-close');
+
+    wrappers.forEach((wrapper) => {
+      if (wrapper.dataset.bound === 'true') return;
+      wrapper.dataset.bound = 'true';
+
+      let zoom = 1;
+      const canvas = wrapper.querySelector<HTMLElement>('[data-mermaid-canvas]');
+      const zoomLabel = wrapper.querySelector<HTMLElement>('[data-mermaid-zoom-level]');
+
+      function applyZoom() {
+        if (canvas) {
+          canvas.style.transform = `scale(${zoom})`;
+        }
+        if (zoomLabel) {
+          zoomLabel.textContent = `${Math.round(zoom * 100)}%`;
+        }
+      }
+
+      wrapper.querySelectorAll<HTMLButtonElement>('[data-mermaid-action]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const action = btn.getAttribute('data-mermaid-action');
+          if (action === 'zoom-in') {
+            zoom = Math.min(2.25, +(zoom + 0.15).toFixed(2));
+            applyZoom();
+          } else if (action === 'zoom-out') {
+            zoom = Math.max(0.5, +(zoom - 0.15).toFixed(2));
+            applyZoom();
+          } else if (action === 'reset') {
+            zoom = 1;
+            applyZoom();
+          } else if (action === 'expand') {
+            if (lightbox && lightboxContent && canvas) {
+              lightboxContent.innerHTML = canvas.innerHTML;
+              const svg = lightboxContent.querySelector('svg');
+              if (svg) {
+                svg.style.width = '100%';
+                svg.style.maxWidth = '1000px';
+                svg.style.height = 'auto';
+              }
+              lightbox.classList.remove('hidden');
+              lightbox.classList.add('flex');
+            }
+          }
+        });
+      });
+    });
+
+    function closeLightbox() {
+      if (!lightbox) return;
+      lightbox.classList.add('hidden');
+      lightbox.classList.remove('flex');
+    }
+
+    lightboxClose?.addEventListener('click', closeLightbox);
+    lightbox?.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox && !lightbox.classList.contains('hidden')) {
+        closeLightbox();
+      }
+    });
+  }
+
+  // Initial render
+  renderAllMermaidDiagrams();
+  bindMermaidControls();
+
+  // Re-render on theme toggle
+  window.addEventListener('studio:theme-change', () => {
+    renderAllMermaidDiagrams();
+  });
+</script>

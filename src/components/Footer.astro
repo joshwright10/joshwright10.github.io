@@ -1,0 +1,55 @@
+---
+const year = new Date().getFullYear();
+const disclaimerText =
+  "The opinions expressed herein are my own personal opinions and do not represent my employer’s view in any way.";
+---
+
+<footer class="mt-24 border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]/50">
+  <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+    <div class="flex flex-col justify-between gap-8 md:flex-row md:items-center">
+      <div class="space-y-2 max-w-xl">
+        <div class="flex items-center gap-2.5">
+          <span class="inline-flex h-2 w-2 rounded-full bg-[var(--accent-secondary)]"></span>
+          <span class="font-mono text-xs font-medium tracking-wider uppercase text-[var(--text-primary)]">
+            DevOps Field Notes // Josh Wright
+          </span>
+        </div>
+        <p class="text-xs leading-relaxed text-[var(--text-muted)]">
+          {disclaimerText}
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4 font-mono text-xs text-[var(--text-secondary)]">
+        <a
+          href="https://github.com/joshwright10"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center gap-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3 py-1.5 transition hover:border-[var(--border-hover)] hover:text-[var(--text-primary)]"
+        >
+          <span>GitHub</span>
+          <span class="text-[var(--text-muted)]">↗</span>
+        </a>
+        <a
+          href="https://www.linkedin.com/in/joshwright10"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center gap-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3 py-1.5 transition hover:border-[var(--border-hover)] hover:text-[var(--text-primary)]"
+        >
+          <span>LinkedIn</span>
+          <span class="text-[var(--text-muted)]">↗</span>
+        </a>
+        <a
+          href="/rss.xml"
+          class="flex items-center gap-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3 py-1.5 transition hover:border-[var(--border-hover)] hover:text-[var(--text-primary)]"
+        >
+          <span>RSS</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="mt-8 flex flex-col justify-between gap-2 border-t border-[var(--border-subtle)] pt-6 font-mono text-[11px] text-[var(--text-muted)] sm:flex-row">
+      <span>© {year} Josh Wright. Built with Astro 5 &amp; Tailwind CSS v4.</span>
+      <span>Madrid, ES · Cloud &amp; Platform Engineering</span>
+    </div>
+  </div>
+</footer>

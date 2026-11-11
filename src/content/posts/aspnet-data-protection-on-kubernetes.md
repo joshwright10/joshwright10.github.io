@@ -3,6 +3,7 @@ title: "ASP.NET Data Protection on Kubernetes: Why It Matters and How to Get It 
 date: 2026-04-09
 draft: false
 tags: ["dotnet", "aspnet", "kubernetes", "azure", "azure-key-vault", "azure-storage", "aks", "workload-identity", "security"]
+description: "Why ASP.NET Data Protection keys break across Kubernetes pods and deployments, and how to persist and protect them with Azure Blob Storage, Azure Key Vault, and AKS Workload Identity."
 ---
 
 If you have ever migrated an ASP.NET application from Azure App Service or IIS to Kubernetes, there is a good chance that ASP.NET Data Protection was not something you had to think about — until things started breaking in subtle and confusing ways. Users getting logged out seemingly at random, cookie validation failures appearing under load, or errors that only materialise after a deployment. These are the classic symptoms of a Data Protection configuration that has not been adapted for a distributed, containerised environment.
@@ -42,7 +43,7 @@ This is the source of the problems you will encounter.
 
 Consider a typical ASP.NET web application deployed with a Kubernetes `Deployment` configured to run three replicas. Each pod generates its own in-memory key ring on startup.
 
-{{< mermaid >}}
+```mermaid
 sequenceDiagram
     actor Browser
     participant LB as K8s Service
@@ -69,7 +70,7 @@ sequenceDiagram
     LB->>C: Load-balanced to Pod C
     Note over C: Cannot decrypt — Key Ring C ≠ Key Ring A
     C-->>Browser: ❌ Authentication failure
-{{< /mermaid >}}
+```
 
 ### Scenario: Authentication Cookie Failures Across Pods
 
@@ -110,7 +111,7 @@ The recommended approach for ASP.NET applications running on AKS (or any Azure-h
 
 > **Infrastructure as Code:** All of the Azure resources referenced in this post — the Storage Account, blob container, Key Vault, key, Managed Identity, and RBAC assignments — should ideally be provisioned and managed via Infrastructure as Code using tools such as Terraform or Crossplane. This ensures resources are version-controlled, repeatable across environments, and not subject to configuration drift. For brevity, the examples below use Azure CLI commands to illustrate the required setup, but these should be translated into your IaC tooling of choice before being used in a real environment.
 
-{{< mermaid >}}
+```mermaid
 flowchart TB
     Browser["Client Browser"]
 
@@ -142,7 +143,7 @@ flowchart TB
     MI -->|"Storage Blob Data Contributor"| Blob
     MI -->|"Key Vault Crypto User"| Key
     Blob -.->|"Key ring XML encrypted using"| Key
-{{< /mermaid >}}
+```
 
 ### Required NuGet Packages
 

@@ -3,6 +3,7 @@ title: "Azure AI Search, Managed Identity and SQL Failover Groups: Does Resource
 date: 2026-11-10
 draft: false
 tags: ["azure", "azure-ai-search", "azure-sql", "failover-groups", "managed-identity", "disaster-recovery", "terraform"]
+description: "Testing whether Azure AI Search indexers using Managed Identity survive SQL Failover Group failovers and server replacements when ResourceId points to a single server."
 ---
 
 If you index an Azure SQL database with Azure AI Search, you will probably want the indexer to use a managed identity rather than a SQL username and password. You will probably also want the database in a failover group, so it can survive a regional outage. Put those two things together and you hit an odd-looking connection string with an open question inside it.
@@ -27,7 +28,7 @@ There are two parts that both seem to say where the database is:
 
 So the listener moves, but the `ResourceId` is fixed to a single server.
 
-{{< mermaid >}}
+```mermaid
 flowchart TB
     subgraph Search["Azure AI Search"]
         DS["Data source<br/>Server = listener<br/>ResourceId = sql-primary"]
@@ -48,7 +49,7 @@ flowchart TB
     L -- "DNS points at current primary" --> P
     P -. "geo-replication" .-> S
     DS -. "ResourceId=<br/>fixed to one server" .-> P
-{{< /mermaid >}}
+```
 
 That leaves two questions:
 
@@ -95,7 +96,7 @@ Every case with a `ResourceId` worked, even when it named a server that had been
 
 Case 6 is the real-world replacement scenario, so here it is step by step:
 
-{{< mermaid >}}
+```mermaid
 flowchart TB
     S1["Start\nGroup: a (primary) + b\nResourceId = a"]
     S2["Failover\nGroup: b (primary) + a\nResourceId = a"]
@@ -106,7 +107,7 @@ flowchart TB
     S2 -->|"indexer signs in to b ✅"| S3
     S3 -->|"indexer signs in to b ✅"| S4
     S4 -->|"indexer signs in to c ✅"| E["ResourceId never changed\nand never mattered"]
-{{< /mermaid >}}
+```
 
 ### You Cannot Remove ResourceId
 
@@ -130,7 +131,7 @@ When everything passes, it's worth asking whether the test can fail at all. Ther
 
 I can't see inside AI Search, so this is a description of how it *behaves*, not how it is built. The results fit this model:
 
-{{< mermaid >}}
+```mermaid
 sequenceDiagram
     participant IX as AI Search indexer
     participant AAD as Microsoft Entra ID
@@ -146,7 +147,7 @@ sequenceDiagram
     IX->>SQL: Connect with token
     SQL-->>IX: Rows
     Note over IX,SQL: The server named in ResourceId is never contacted
-{{< /mermaid >}}
+```
 
 - **`ResourceId` is a switch.** Its presence tells Search to use managed identity sign-in. Its value is not checked against a real server, at least not over a public network path.
 - **`Server=` is the target.** The indexer connects wherever it points, which for a listener means the current primary.

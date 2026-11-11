@@ -3,6 +3,7 @@ title: "Create Dynamic Azure DevOps Variable Insertion when using Templates"
 date: 2023-03-06
 draft: false
 tags: ["azure-devops", "pipeline"]
+description: "How to pass an object parameter and use the ${{ insert }} expression in Azure DevOps YAML templates for dynamic variable injection and token replacement."
 ---
 There are scenarios where it might be useful to call a template and have that template define variables dynamically based on the provided parameters.
 The main use case I have seen for this is when the [Replace Tokens](https://marketplace.visualstudio.com/items?itemName=qetza.replacetokens) Azure DevOps Task is called.

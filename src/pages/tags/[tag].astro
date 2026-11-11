@@ -1,0 +1,66 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  );
+
+  const uniqueTags = new Set<string>();
+  for (const post of posts) {
+    for (const tag of post.data.tags || []) {
+      uniqueTags.add(tag);
+    }
+  }
+
+  return Array.from(uniqueTags).map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts.filter((post) => (post.data.tags || []).includes(tag)),
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`#${tag}`} description={`Articles tagged with #${tag} on DevOps Field Notes.`}>
+  <div class="mb-6">
+    <a
+      href="/tags/"
+      class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3 py-1.5 font-mono text-xs text-[var(--text-secondary)] transition hover:border-[var(--border-hover)] hover:text-[var(--text-primary)]"
+    >
+      ← All Tags
+    </a>
+  </div>
+
+  <section class="mb-8 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)]/90 p-6 sm:p-8">
+    <div class="font-mono text-xs text-[var(--accent-primary)] uppercase tracking-wider">
+      TAG FILTER // #{tag}
+    </div>
+    <h1 class="mt-2 text-2xl font-bold tracking-tight text-[var(--text-primary)] sm:text-3xl">
+      Articles tagged <span class="font-mono text-[var(--accent-primary)]">#{tag}</span>
+    </h1>
+    <p class="mt-2 font-mono text-xs text-[var(--text-muted)]">
+      {posts.length} {posts.length === 1 ? 'article' : 'articles'} found
+    </p>
+  </section>
+
+  <section class="grid grid-cols-1 gap-6 md:grid-cols-2">
+    {
+      posts.map((post) => (
+        <PostCard
+          slug={post.id}
+          title={post.data.title}
+          date={post.data.date}
+          description={post.data.description}
+          tags={post.data.tags}
+          body={post.body || ''}
+        />
+      ))
+    }
+  </section>
+</BaseLayout>

@@ -1,0 +1,82 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  tags?: string[];
+}
+
+const {
+  title,
+  description = 'DevOps Field Notes — Cloud Architecture, Kubernetes, Azure, and Platform Engineering by Josh Wright.',
+  type = 'website',
+  publishedTime,
+  tags = [],
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const fullTitle = title === 'DevOps Field Notes' ? `${title} — Josh Wright` : `${title} | DevOps Field Notes`;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="generator" content={Astro.generator} />
+<link rel="canonical" href={canonicalURL} />
+<link rel="sitemap" href="/sitemap-index.xml" />
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title="DevOps Field Notes RSS Feed"
+  href={new URL('rss.xml', Astro.site)}
+/>
+
+<!-- Fonts: Geist & JetBrains Mono -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+  rel="stylesheet"
+/>
+
+<!-- Primary Meta Tags -->
+<title>{fullTitle}</title>
+<meta name="title" content={fullTitle} />
+<meta name="description" content={description} />
+<meta name="author" content="Josh Wright" />
+{tags.length > 0 && <meta name="keywords" content={tags.join(', ')} />}
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:site_name" content="DevOps Field Notes" />
+{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={canonicalURL} />
+<meta property="twitter:title" content={fullTitle} />
+<meta property="twitter:description" content={description} />
+
+<!-- Theme Initialization (prevent flash, default dark) -->
+<script is:inline>
+  (function () {
+    const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('theme') : null;
+    const theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+
+<!-- Google Analytics GA4 (G-L9PR34KNNJ) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L9PR34KNNJ" is:inline></script>
+<script is:inline>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag('js', new Date());
+  gtag('config', 'G-L9PR34KNNJ');
+</script>

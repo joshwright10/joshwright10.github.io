@@ -1,0 +1,233 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import MermaidRenderer from '../components/MermaidRenderer.astro';
+import Giscus from '../components/Giscus.astro';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface AdjacentPost {
+  id: string;
+  title: string;
+}
+
+interface Props {
+  title: string;
+  date: Date;
+  description?: string;
+  tags?: string[];
+  headings?: Heading[];
+  body?: string;
+  prevPost?: AdjacentPost | null;
+  nextPost?: AdjacentPost | null;
+  relatedPosts?: AdjacentPost[];
+}
+
+const {
+  title,
+  date,
+  description,
+  tags = [],
+  headings = [],
+  body = '',
+  prevPost = null,
+  nextPost = null,
+  relatedPosts = [],
+} = Astro.props;
+
+const wordCount = body.trim().split(/\s+/).filter(Boolean).length;
+const readingMinutes = Math.max(1, Math.ceil(wordCount / 215));
+
+const formattedDate = date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  type="article"
+  publishedTime={date.toISOString()}
+  tags={tags}
+>
+  <!-- Top Reading Progress Bar -->
+  <div class="fixed top-0 left-0 right-0 z-50 h-0.5 bg-transparent pointer-events-none">
+    <div
+      id="reading-progress"
+      class="h-full w-0 bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] transition-[width] duration-75"
+    />
+  </div>
+
+  <!-- Breadcrumb & Back Navigation -->
+  <div class="mb-6 flex items-center justify-between font-mono text-xs text-[var(--text-muted)]">
+    <a
+      href="/"
+      class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3 py-1.5 text-[var(--text-secondary)] transition hover:border-[var(--border-hover)] hover:text-[var(--text-primary)]"
+    >
+      <span>←</span>
+      <span>All Field Notes</span>
+    </a>
+    <span class="hidden sm:inline">ARTICLE // TECHNICAL DEEP DIVE</span>
+  </div>
+
+  <!-- Article Header Banner -->
+  <header class="mb-10 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)]/80 p-6 sm:p-8 lg:p-10">
+    <div class="flex flex-wrap items-center gap-2.5 font-mono text-xs text-[var(--text-muted)]">
+      <time datetime={date.toISOString()} class="text-[var(--accent-primary)] font-medium">
+        {formattedDate}
+      </time>
+      <span>·</span>
+      <span>{readingMinutes} min read</span>
+      <span>·</span>
+      <span>{wordCount.toLocaleString()} words</span>
+    </div>
+
+    <h1 class="mt-4 text-2xl font-bold tracking-tight text-[var(--text-primary)] sm:text-4xl lg:text-[2.5rem] lg:leading-[1.18]">
+      {title}
+    </h1>
+
+    {
+      description && (
+        <p class="mt-4 max-w-3xl text-base leading-relaxed text-[var(--text-secondary)] sm:text-lg">
+          {description}
+        </p>
+      )
+    }
+
+    {
+      tags.length > 0 && (
+        <div class="mt-6 flex flex-wrap gap-2 border-t border-[var(--border-subtle)] pt-5">
+          {tags.map((tag) => (
+            <a
+              href={`/tags/${tag}/`}
+              class="rounded-md border border-[var(--border-subtle)] bg-[var(--bg-canvas)] px-2.5 py-1 font-mono text-xs text-[var(--text-secondary)] transition hover:border-[var(--border-hover)] hover:text-[var(--accent-primary)]"
+            >
+              #{tag}
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </header>
+
+  <!-- 2-Column Content + Sticky TOC -->
+  <div class="grid grid-cols-1 gap-10 lg:grid-cols-12">
+    <div class="lg:col-span-8 xl:col-span-9 min-w-0">
+      <article class="studio-prose max-w-none">
+        <slot />
+      </article>
+
+      <!-- Prev / Next Navigation -->
+      {
+        (prevPost || nextPost) && (
+          <nav
+            aria-label="Adjacent articles"
+            class="mt-14 grid grid-cols-1 gap-4 border-t border-[var(--border-subtle)] pt-8 sm:grid-cols-2"
+          >
+            {prevPost ? (
+              <a
+                href={`/posts/${prevPost.id}/`}
+                class="group flex flex-col justify-between rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-4 transition hover:border-[var(--border-hover)]"
+              >
+                <span class="font-mono text-[11px] uppercase tracking-wider text-[var(--text-muted)]">
+                  ← Older Note
+                </span>
+                <span class="mt-1.5 text-sm font-medium text-[var(--text-primary)] group-hover:text-[var(--accent-primary)]">
+                  {prevPost.title}
+                </span>
+              </a>
+            ) : (
+              <div />
+            )}
+
+            {nextPost && (
+              <a
+                href={`/posts/${nextPost.id}/`}
+                class="group flex flex-col justify-between rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-4 text-right transition hover:border-[var(--border-hover)]"
+              >
+                <span class="font-mono text-[11px] uppercase tracking-wider text-[var(--text-muted)]">
+                  Newer Note →
+                </span>
+                <span class="mt-1.5 text-sm font-medium text-[var(--text-primary)] group-hover:text-[var(--accent-primary)]">
+                  {nextPost.title}
+                </span>
+              </a>
+            )}
+          </nav>
+        )
+      }
+
+      <!-- Related Articles -->
+      {
+        relatedPosts.length > 0 && (
+          <section class="mt-12 border-t border-[var(--border-subtle)] pt-8">
+            <h2 class="font-mono text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+              Related Field Notes
+            </h2>
+            <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {relatedPosts.map((rel) => (
+                <a
+                  href={`/posts/${rel.id}/`}
+                  class="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-4 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--border-hover)] hover:text-[var(--accent-primary)]"
+                >
+                  {rel.title}
+                </a>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      <!-- Giscus Comments -->
+      <Giscus />
+    </div>
+
+    <!-- Desktop Sticky Sidebar -->
+    <aside class="hidden lg:block lg:col-span-4 xl:col-span-3">
+      <div class="sticky top-24 space-y-6">
+        <TableOfContents headings={headings} />
+
+        <div class="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)]/80 p-4">
+          <div class="font-mono text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+            Author
+          </div>
+          <div class="mt-2 text-sm font-semibold text-[var(--text-primary)]">Josh Wright</div>
+          <p class="mt-1 text-xs leading-relaxed text-[var(--text-secondary)]">
+            DevOps &amp; Platform Engineering Consultant based in Madrid. Specialising in Kubernetes, Azure, and Terraform.
+          </p>
+          <a
+            href="/page/about/"
+            class="mt-3 inline-block font-mono text-xs text-[var(--accent-primary)] hover:underline"
+          >
+            Profile &amp; Credentials →
+          </a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Client-side Mermaid v11 Renderer & Interactive Toolbar -->
+  <MermaidRenderer />
+
+  <script is:inline>
+    (function () {
+      const bar = document.getElementById('reading-progress');
+      if (!bar) return;
+      window.addEventListener(
+        'scroll',
+        () => {
+          const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          const pct = docHeight > 0 ? Math.min(100, Math.max(0, (window.scrollY / docHeight) * 100)) : 0;
+          bar.style.width = `${pct}%`;
+        },
+        { passive: true }
+      );
+    })();
+  </script>
+</BaseLayout>

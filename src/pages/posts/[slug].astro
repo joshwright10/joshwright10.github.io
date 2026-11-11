@@ -1,0 +1,44 @@
+---
+import { getCollection, render } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  );
+
+  return posts.map((post, index) => {
+    const nextPost = index > 0 ? { id: posts[index - 1].id, title: posts[index - 1].data.title } : null;
+    const prevPost =
+      index < posts.length - 1 ? { id: posts[index + 1].id, title: posts[index + 1].data.title } : null;
+
+    const currentTags = new Set(post.data.tags || []);
+    const relatedPosts = posts
+      .filter((p) => p.id !== post.id && (p.data.tags || []).some((t) => currentTags.has(t)))
+      .slice(0, 2)
+      .map((p) => ({ id: p.id, title: p.data.title }));
+
+    return {
+      params: { slug: post.id },
+      props: { post, prevPost, nextPost, relatedPosts },
+    };
+  });
+}
+
+const { post, prevPost, nextPost, relatedPosts } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<PostLayout
+  title={post.data.title}
+  date={post.data.date}
+  description={post.data.description}
+  tags={post.data.tags}
+  headings={headings}
+  body={post.body || ''}
+  prevPost={prevPost}
+  nextPost={nextPost}
+  relatedPosts={relatedPosts}
+>
+  <Content />
+</PostLayout>
