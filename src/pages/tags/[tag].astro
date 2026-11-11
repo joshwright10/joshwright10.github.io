@@ -27,40 +27,43 @@ export async function getStaticPaths() {
 const { tag, posts } = Astro.props;
 ---
 
-<BaseLayout title={`#${tag}`} description={`Articles tagged with #${tag} on DevOps Field Notes.`}>
-  <div class="mb-6">
-    <a
-      href="/tags/"
-      class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3 py-1.5 font-mono text-xs text-[var(--text-secondary)] transition hover:border-[var(--border-hover)] hover:text-[var(--text-primary)]"
-    >
-      ← All Tags
-    </a>
-  </div>
-
-  <section class="mb-8 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)]/90 p-6 sm:p-8">
-    <div class="font-mono text-xs text-[var(--accent-primary)] uppercase tracking-wider">
-      TAG FILTER // #{tag}
+<BaseLayout title={`Topic: ${tag}`} description={`Articles tagged with ${tag} on DevOps Field Notes.`}>
+  <section class="border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]">
+    <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
+      <div class="mb-4">
+        <a
+          href="/tags/"
+          class="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+        >
+          ← All topics
+        </a>
+      </div>
+      <p class="text-xs font-semibold uppercase tracking-widest text-[var(--accent-primary)]">
+        Topic
+      </p>
+      <h1 class="mt-1 text-3xl font-semibold tracking-tight text-[var(--text-primary)] sm:text-4xl">
+        {tag}
+      </h1>
+      <p class="mt-2 text-sm text-[var(--text-muted)]">
+        {posts.length} {posts.length === 1 ? 'article' : 'articles'}
+      </p>
     </div>
-    <h1 class="mt-2 text-2xl font-bold tracking-tight text-[var(--text-primary)] sm:text-3xl">
-      Articles tagged <span class="font-mono text-[var(--accent-primary)]">#{tag}</span>
-    </h1>
-    <p class="mt-2 font-mono text-xs text-[var(--text-muted)]">
-      {posts.length} {posts.length === 1 ? 'article' : 'articles'} found
-    </p>
   </section>
 
-  <section class="grid grid-cols-1 gap-6 md:grid-cols-2">
-    {
-      posts.map((post) => (
-        <PostCard
-          slug={post.id}
-          title={post.data.title}
-          date={post.data.date}
-          description={post.data.description}
-          tags={post.data.tags}
-          body={post.body || ''}
-        />
-      ))
-    }
-  </section>
+  <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+    <div class="max-w-3xl divide-y divide-[var(--border-subtle)]">
+      {
+        posts.map((post) => (
+          <PostCard
+            slug={post.id}
+            title={post.data.title}
+            date={post.data.date}
+            description={post.data.description}
+            tags={post.data.tags}
+            body={post.body || ''}
+          />
+        ))
+      }
+    </div>
+  </div>
 </BaseLayout>

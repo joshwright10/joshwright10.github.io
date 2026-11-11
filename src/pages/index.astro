@@ -7,6 +7,8 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
 
+const [latestPost] = posts;
+
 const tagCounts = new Map<string, number>();
 for (const post of posts) {
   for (const tag of post.data.tags || []) {
@@ -16,129 +18,187 @@ for (const post of posts) {
 
 const topTags = Array.from(tagCounts.entries())
   .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-  .slice(0, 10);
+  .slice(0, 12);
 ---
 
 <BaseLayout
   title="DevOps Field Notes"
-  description="Architecture notes, real-world experiments, and production patterns across Kubernetes, Azure, .NET, and Platform Engineering by Josh Wright."
+  description="Technical deep dives on Kubernetes, Azure, .NET, and platform engineering by Josh Wright."
 >
-  <!-- Hero Section -->
-  <section class="relative mb-12 overflow-hidden rounded-3xl border border-[var(--border-subtle)] bg-[var(--bg-surface)]/90 p-6 sm:p-10 lg:p-12">
-    <div class="flex flex-wrap items-center gap-2 font-mono text-xs text-[var(--accent-secondary)]">
-      <span class="inline-block h-2 w-2 rounded-full bg-[var(--accent-secondary)] animate-pulse" />
-      <span>ENGINEERING STUDIO // FIELD NOTES</span>
-      <span class="text-[var(--text-muted)]">·</span>
-      <span class="text-[var(--text-muted)]">JOSH WRIGHT</span>
-    </div>
-
-    <h1 class="mt-4 max-w-3xl text-3xl font-bold tracking-tight text-[var(--text-primary)] sm:text-5xl lg:leading-[1.12]">
-      Production notes on <span class="text-[var(--accent-primary)]">Cloud</span>,{' '}
-      <span class="text-[var(--accent-secondary)]">Kubernetes</span> &amp; Platform Engineering.
-    </h1>
-
-    <p class="mt-4 max-w-2xl text-base leading-relaxed text-[var(--text-secondary)] sm:text-lg">
-      Deep-dive investigations, architecture diagrams, and battle-tested automation patterns from building and operating distributed systems on Azure.
-    </p>
-
-    <div class="mt-7 flex flex-wrap items-center gap-3 font-mono text-xs">
-      <a
-        href="/page/about/"
-        class="inline-flex items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-2 font-medium text-[var(--text-primary)] transition hover:border-[var(--border-hover)]"
-      >
-        <span>About Josh Wright</span>
-        <span class="text-[var(--accent-primary)]">→</span>
-      </a>
-      <a
-        href="/rss.xml"
-        class="inline-flex items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-canvas)] px-3.5 py-2 text-[var(--text-secondary)] transition hover:border-[var(--border-hover)] hover:text-[var(--text-primary)]"
-      >
-        <span>RSS Feed</span>
-      </a>
+  <!-- Tailscale-style Warm Stone Masthead Band -->
+  <section class="border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]">
+    <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <div class="max-w-3xl">
+        <p class="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+          Engineering Blog
+        </p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-[var(--text-primary)] sm:text-5xl">
+          DevOps Field Notes
+        </h1>
+        <p class="mt-4 text-base leading-relaxed text-[var(--text-secondary)] sm:text-lg">
+          Technical deep dives, architecture notes, and real-world investigations across Kubernetes, Azure, .NET, and platform engineering.
+        </p>
+      </div>
     </div>
   </section>
 
-  <!-- Interactive Tag Filter Bar -->
-  <section class="mb-8" aria-label="Filter articles by tag">
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-      <div class="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[var(--text-muted)]">
-        <span class="inline-block h-1.5 w-1.5 rounded-full bg-[var(--accent-primary)]" />
-        <span>Published Dispatches ({posts.length})</span>
-      </div>
-      <a href="/tags/" class="font-mono text-xs text-[var(--accent-primary)] hover:underline">
-        View all {tagCounts.size} tags →
-      </a>
-    </div>
+  <!-- Main Editorial Feed + Topic Rail -->
+  <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+    <!-- Featured Latest Post -->
+    {
+      latestPost && (
+        <section class="pb-12 border-b border-[var(--border-subtle)]" id="featured-post-section">
+          <div class="mb-4 text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+            Latest Dispatch
+          </div>
+          <PostCard
+            slug={latestPost.id}
+            title={latestPost.data.title}
+            date={latestPost.data.date}
+            description={latestPost.data.description}
+            tags={latestPost.data.tags}
+            body={latestPost.body || ''}
+            featured={true}
+          />
+        </section>
+      )
+    }
 
-    <div class="flex flex-wrap gap-2" id="tag-filter-bar">
-      <button
-        type="button"
-        data-filter-tag="all"
-        class="tag-filter-pill rounded-lg border border-[var(--accent-primary)] bg-[var(--accent-primary)]/15 px-3 py-1 font-mono text-xs font-medium text-[var(--accent-primary)] transition cursor-pointer"
-      >
-        All ({posts.length})
-      </button>
-      {
-        topTags.map(([tag, count]) => (
+    <!-- Asymmetric 12-Col Layout: Article Stream (8 cols) + Topic Sidebar (4 cols) -->
+    <div class="mt-10 grid grid-cols-1 gap-12 lg:grid-cols-12">
+      <!-- Article List -->
+      <section class="lg:col-span-8" aria-label="Published articles">
+        <div class="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3">
+          <h2 class="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]" id="feed-heading">
+            All Articles
+          </h2>
           <button
             type="button"
-            data-filter-tag={tag}
-            class="tag-filter-pill rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3 py-1 font-mono text-xs text-[var(--text-secondary)] transition hover:border-[var(--border-hover)] hover:text-[var(--text-primary)] cursor-pointer"
+            id="clear-filter-btn"
+            class="hidden text-xs font-medium text-[var(--accent-primary)] hover:underline cursor-pointer"
           >
-            #{tag} <span class="text-[var(--text-muted)]">({count})</span>
+            Clear filter
           </button>
-        ))
-      }
-    </div>
-  </section>
+        </div>
 
-  <!-- Posts Grid -->
-  <section class="grid grid-cols-1 gap-6 md:grid-cols-2" id="posts-grid">
-    {
-      posts.map((post, idx) => (
-        <PostCard
-          slug={post.id}
-          title={post.data.title}
-          date={post.data.date}
-          description={post.data.description}
-          tags={post.data.tags}
-          body={post.body || ''}
-          featured={idx === 0}
-        />
-      ))
-    }
-  </section>
+        <div id="posts-grid" class="divide-y divide-[var(--border-subtle)]">
+          {
+            posts.map((post) => (
+              <PostCard
+                slug={post.id}
+                title={post.data.title}
+                date={post.data.date}
+                description={post.data.description}
+                tags={post.data.tags}
+                body={post.body || ''}
+              />
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- Right Sidebar (Topics & Author) -->
+      <aside class="lg:col-span-4">
+        <div class="sticky top-8 space-y-10 lg:border-l lg:border-[var(--border-subtle)] lg:pl-8">
+          <!-- Topic Filter -->
+          <div>
+            <div class="flex items-center justify-between">
+              <h2 class="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+                Browse by Topic
+              </h2>
+              <a href="/tags/" class="text-xs text-[var(--accent-primary)] hover:underline">
+                All topics →
+              </a>
+            </div>
+
+            <div class="mt-4 flex flex-wrap gap-1.5" id="tag-filter-bar">
+              <button
+                type="button"
+                data-filter-tag="all"
+                class="tag-filter-pill rounded border border-[var(--text-primary)] bg-[var(--text-primary)] px-2.5 py-1 text-xs font-medium text-[var(--bg-canvas)] transition cursor-pointer"
+              >
+                All
+              </button>
+              {
+                topTags.map(([tag]) => (
+                  <button
+                    type="button"
+                    data-filter-tag={tag}
+                    class="tag-filter-pill rounded border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-2.5 py-1 text-xs text-[var(--text-secondary)] transition hover:border-[var(--border-hover)] hover:text-[var(--text-primary)] cursor-pointer"
+                  >
+                    {tag}
+                  </button>
+                ))
+              }
+            </div>
+          </div>
+
+          <!-- About Blurb -->
+          <div class="border-t border-[var(--border-subtle)] pt-8">
+            <h2 class="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+              Written by
+            </h2>
+            <p class="mt-2 text-sm font-semibold text-[var(--text-primary)]">Josh Wright</p>
+            <p class="mt-1.5 text-sm leading-relaxed text-[var(--text-secondary)]">
+              DevOps consultant based in Madrid, originally from the UK. Working with PowerShell, Terraform, Kubernetes, and Azure.
+            </p>
+            <div class="mt-4 flex items-center gap-4 text-xs font-medium text-[var(--accent-primary)]">
+              <a href="/page/about/" class="hover:underline">More about Josh →</a>
+              <a href="/rss.xml" class="text-[var(--text-muted)] hover:text-[var(--text-primary)]">RSS Feed</a>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
 
   <script is:inline>
     (function () {
       const buttons = document.querySelectorAll('[data-filter-tag]');
-      const cards = document.querySelectorAll('[data-post-card]');
+      const feedCards = document.querySelectorAll('#posts-grid [data-post-card]');
+      const featuredSection = document.getElementById('featured-post-section');
+      const heading = document.getElementById('feed-heading');
+      const clearBtn = document.getElementById('clear-filter-btn');
+
+      function applyFilter(selected) {
+        buttons.forEach((b) => {
+          const active = b.getAttribute('data-filter-tag') === selected;
+          if (active) {
+            b.className =
+              'tag-filter-pill rounded border border-[var(--text-primary)] bg-[var(--text-primary)] px-2.5 py-1 text-xs font-medium text-[var(--bg-canvas)] transition cursor-pointer';
+          } else {
+            b.className =
+              'tag-filter-pill rounded border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-2.5 py-1 text-xs text-[var(--text-secondary)] transition hover:border-[var(--border-hover)] hover:text-[var(--text-primary)] cursor-pointer';
+          }
+        });
+
+        if (featuredSection) {
+          featuredSection.style.display = selected === 'all' ? '' : 'none';
+        }
+        if (heading) {
+          heading.textContent = selected === 'all' ? 'All Articles' : `Topic: ${selected}`;
+        }
+        if (clearBtn) {
+          clearBtn.classList.toggle('hidden', selected === 'all');
+        }
+
+        feedCards.forEach((card) => {
+          const cardTags = (card.getAttribute('data-tags') || '').split(',');
+          if (selected === 'all' || cardTags.includes(selected)) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      }
 
       buttons.forEach((btn) => {
         btn.addEventListener('click', () => {
-          const selected = btn.getAttribute('data-filter-tag') || 'all';
-
-          buttons.forEach((b) => {
-            const active = b.getAttribute('data-filter-tag') === selected;
-            if (active) {
-              b.className =
-                'tag-filter-pill rounded-lg border border-[var(--accent-primary)] bg-[var(--accent-primary)]/15 px-3 py-1 font-mono text-xs font-medium text-[var(--accent-primary)] transition cursor-pointer';
-            } else {
-              b.className =
-                'tag-filter-pill rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-3 py-1 font-mono text-xs text-[var(--text-secondary)] transition hover:border-[var(--border-hover)] hover:text-[var(--text-primary)] cursor-pointer';
-            }
-          });
-
-          cards.forEach((card) => {
-            const cardTags = (card.getAttribute('data-tags') || '').split(',');
-            if (selected === 'all' || cardTags.includes(selected)) {
-              card.classList.remove('hidden');
-            } else {
-              card.classList.add('hidden');
-            }
-          });
+          applyFilter(btn.getAttribute('data-filter-tag') || 'all');
         });
       });
+
+      clearBtn?.addEventListener('click', () => applyFilter('all'));
     })();
   </script>
 </BaseLayout>

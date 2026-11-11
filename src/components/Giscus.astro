@@ -1,12 +1,9 @@
-<section class="mt-16 border-t border-[var(--border-subtle)] pt-10" aria-label="Comments">
-  <div class="mb-6 flex items-center justify-between">
-    <div class="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[var(--text-muted)]">
-      <span class="inline-block h-2 w-2 rounded-full bg-[var(--accent-secondary)]"></span>
-      <span>Discussion // GitHub Giscus</span>
-    </div>
-  </div>
+<section class="mt-14 border-t border-[var(--border-subtle)] pt-10" aria-label="Comments">
+  <h2 class="mb-6 text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+    Comments
+  </h2>
 
-  <div class="giscus-container rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-4 sm:p-6">
+  <div class="giscus-container">
     <script
       src="https://giscus.app/client.js"
       data-repo="joshwright10/joshwright10.github.io"
@@ -18,7 +15,7 @@
       data-reactions-enabled="1"
       data-emit-metadata="0"
       data-input-position="bottom"
-      data-theme="dark_dimmed"
+      data-theme="light"
       data-lang="en"
       data-loading="lazy"
       crossorigin="anonymous"
@@ -33,7 +30,7 @@
     function syncGiscusTheme(theme) {
       const iframe = document.querySelector('iframe.giscus-frame');
       if (!iframe || !iframe.contentWindow) return;
-      const giscusTheme = theme === 'light' ? 'light' : 'dark_dimmed';
+      const giscusTheme = theme === 'dark' ? 'dark_dimmed' : 'light';
       iframe.contentWindow.postMessage(
         { giscus: { setConfig: { theme: giscusTheme } } },
         'https://giscus.app'
@@ -41,7 +38,7 @@
     }
 
     window.addEventListener('studio:theme-change', (e) => {
-      syncGiscusTheme(e.detail?.theme || 'dark');
+      syncGiscusTheme(e.detail?.theme || 'light');
     });
   })();
 </script>

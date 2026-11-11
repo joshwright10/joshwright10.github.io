@@ -9,7 +9,7 @@ interface Props {
 
 const {
   title,
-  description = 'DevOps Field Notes — Cloud Architecture, Kubernetes, Azure, and Platform Engineering by Josh Wright.',
+  description = 'DevOps Field Notes — Technical writing on Kubernetes, Azure, .NET, and platform engineering by Josh Wright.',
   type = 'website',
   publishedTime,
   tags = [],
@@ -32,11 +32,11 @@ const fullTitle = title === 'DevOps Field Notes' ? `${title} — Josh Wright` : 
   href={new URL('rss.xml', Astro.site)}
 />
 
-<!-- Fonts: Geist & JetBrains Mono -->
+<!-- Fonts: Inter & JetBrains Mono -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
-  href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap"
   rel="stylesheet"
 />
 
@@ -61,11 +61,11 @@ const fullTitle = title === 'DevOps Field Notes' ? `${title} — Josh Wright` : 
 <meta property="twitter:title" content={fullTitle} />
 <meta property="twitter:description" content={description} />
 
-<!-- Theme Initialization (prevent flash, default dark) -->
+<!-- Theme Initialization (default light, like Tailscale) -->
 <script is:inline>
   (function () {
-    const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('theme') : null;
-    const theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
+    const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('ts-theme') : null;
+    const theme = stored === 'light' || stored === 'dark' ? stored : 'light';
     document.documentElement.setAttribute('data-theme', theme);
   })();
 </script>

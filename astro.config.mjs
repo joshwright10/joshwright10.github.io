@@ -17,26 +17,26 @@ export default defineConfig({
   },
   integrations: [
     expressiveCode({
-      themes: ['github-dark-default', 'github-light-default'],
+      themes: ['github-light-default', 'github-dark-default'],
       themeCssSelector: (theme) => {
-        if (theme.name === 'github-light-default') {
-          return '[data-theme="light"]';
+        if (theme.name === 'github-dark-default') {
+          return '[data-theme="dark"]';
         }
-        return '[data-theme="dark"], :root:not([data-theme="light"])';
+        return '[data-theme="light"], :root:not([data-theme="dark"])';
       },
       styleOverrides: {
-        borderRadius: '0.75rem',
+        borderRadius: '0.5rem',
         borderWidth: '1px',
         borderColor: 'var(--border-subtle)',
         codeFontFamily: 'var(--font-mono)',
-        codeFontSize: '0.875rem',
-        uiFontFamily: 'var(--font-mono)',
+        codeFontSize: '0.865rem',
+        uiFontFamily: 'var(--font-sans)',
         frames: {
           frameBoxShadowCssValue: 'none',
-          editorActiveTabBackground: 'var(--bg-elevated)',
+          editorActiveTabBackground: 'var(--bg-canvas)',
           editorTabBarBackground: 'var(--bg-surface)',
           terminalTitlebarBackground: 'var(--bg-surface)',
-          terminalBackground: 'var(--bg-surface)',
+          terminalBackground: 'var(--bg-canvas)',
         },
       },
     }),

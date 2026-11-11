@@ -17,7 +17,7 @@ const { title, description, type, publishedTime, tags } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
   <head>
     <BaseHead
       title={title}
@@ -27,9 +27,9 @@ const { title, description, type, publishedTime, tags } = Astro.props;
       tags={tags}
     />
   </head>
-  <body class="flex min-h-screen flex-col selection:bg-[var(--accent-primary)]/25 selection:text-[var(--accent-primary)]">
+  <body class="flex min-h-screen flex-col">
     <Header />
-    <main class="mx-auto w-full max-w-6xl flex-1 px-4 pt-10 sm:px-6 lg:px-8">
+    <main class="flex-1">
       <slot />
     </main>
     <Footer />

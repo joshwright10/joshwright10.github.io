@@ -1,75 +1,74 @@
 <!-- Fullscreen Mermaid Lightbox Modal -->
 <div
   id="mermaid-lightbox"
-  class="fixed inset-0 z-50 hidden flex-col bg-black/85 backdrop-blur-md p-4 sm:p-8"
+  class="fixed inset-0 z-50 hidden flex-col bg-black/75 p-4 sm:p-8"
   role="dialog"
   aria-modal="true"
-  aria-label="Expanded Architecture Diagram"
+  aria-label="Expanded Diagram"
 >
-  <div class="mx-auto flex w-full max-w-6xl items-center justify-between rounded-t-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-4 py-3">
-    <div class="flex items-center gap-2 font-mono text-xs text-[var(--text-primary)]">
-      <span class="inline-block h-2 w-2 rounded-full bg-[var(--accent-primary)]"></span>
-      <span>DIAGRAM VIEWER // FULLSCREEN</span>
-    </div>
+  <div class="mx-auto flex w-full max-w-6xl items-center justify-between rounded-t-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-4 py-2.5">
+    <span class="text-xs font-medium text-[var(--text-secondary)]">Diagram View</span>
     <button
       type="button"
       id="mermaid-lightbox-close"
       class="mermaid-btn"
       aria-label="Close expanded diagram"
     >
-      ESC / Close
+      Close (Esc)
     </button>
   </div>
   <div
     id="mermaid-lightbox-content"
-    class="mx-auto flex w-full max-w-6xl flex-1 items-center justify-center overflow-auto rounded-b-xl border border-t-0 border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6"
+    class="mx-auto flex w-full max-w-6xl flex-1 items-center justify-center overflow-auto rounded-b-lg border border-t-0 border-[var(--border-subtle)] bg-[var(--bg-canvas)] p-6"
   ></div>
 </div>
 
 <script>
   function getMermaidConfig(theme: string) {
-    const isLight = theme === 'light';
+    const isLight = theme !== 'dark';
     return {
       startOnLoad: false,
       securityLevel: 'strict' as const,
       theme: 'base' as const,
-      fontFamily: 'Geist, Inter, system-ui, sans-serif',
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       themeVariables: isLight
         ? {
             background: '#ffffff',
-            primaryColor: '#f4f4f5',
-            primaryTextColor: '#09090b',
-            primaryBorderColor: '#0284c7',
-            lineColor: '#52525b',
-            secondaryColor: '#e0f2fe',
-            tertiaryColor: '#f4f4f5',
-            clusterBkg: '#fafafa',
-            clusterBorder: '#d4d4d8',
-            actorBkg: '#f4f4f5',
-            actorBorder: '#0284c7',
-            actorTextColor: '#09090b',
-            noteBkgColor: '#e0f2fe',
-            noteTextColor: '#09090b',
-            noteBorderColor: '#0284c7',
+            primaryColor: '#f6f5f1',
+            primaryTextColor: '#191817',
+            primaryBorderColor: '#b8b4ab',
+            lineColor: '#53514e',
+            secondaryColor: '#eef2ff',
+            tertiaryColor: '#f6f5f1',
+            clusterBkg: '#faf9f6',
+            clusterBorder: '#dcd9d0',
+            actorBkg: '#f6f5f1',
+            actorBorder: '#3b5ccc',
+            actorTextColor: '#191817',
+            signalColor: '#191817',
+            signalTextColor: '#191817',
+            noteBkgColor: '#eef2ff',
+            noteTextColor: '#191817',
+            noteBorderColor: '#3b5ccc',
           }
         : {
-            background: '#121215',
-            primaryColor: '#18181b',
-            primaryTextColor: '#fafafa',
-            primaryBorderColor: '#38bdf8',
-            lineColor: '#a1a1aa',
-            secondaryColor: '#1e293b',
-            tertiaryColor: '#18181b',
-            clusterBkg: '#09090b',
-            clusterBorder: '#27272a',
-            actorBkg: '#18181b',
-            actorBorder: '#38bdf8',
-            actorTextColor: '#fafafa',
-            signalColor: '#fafafa',
-            signalTextColor: '#fafafa',
-            noteBkgColor: '#1e293b',
-            noteTextColor: '#fafafa',
-            noteBorderColor: '#38bdf8',
+            background: '#141413',
+            primaryColor: '#1c1b19',
+            primaryTextColor: '#f4f3ef',
+            primaryBorderColor: '#4a4842',
+            lineColor: '#b8b5ad',
+            secondaryColor: '#222738',
+            tertiaryColor: '#1c1b19',
+            clusterBkg: '#181715',
+            clusterBorder: '#33312d',
+            actorBkg: '#1c1b19',
+            actorBorder: '#7c9aff',
+            actorTextColor: '#f4f3ef',
+            signalColor: '#f4f3ef',
+            signalTextColor: '#f4f3ef',
+            noteBkgColor: '#222738',
+            noteTextColor: '#f4f3ef',
+            noteBorderColor: '#7c9aff',
           },
     };
   }
@@ -79,7 +78,7 @@
     if (!wrappers.length) return;
 
     const { default: mermaid } = await import('mermaid');
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
     mermaid.initialize(getMermaidConfig(currentTheme));
 
     let index = 0;
@@ -169,11 +168,9 @@
     });
   }
 
-  // Initial render
   renderAllMermaidDiagrams();
   bindMermaidControls();
 
-  // Re-render on theme toggle
   window.addEventListener('studio:theme-change', () => {
     renderAllMermaidDiagrams();
   });
