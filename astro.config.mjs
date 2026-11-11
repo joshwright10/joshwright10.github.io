@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import expressiveCode from 'astro-expressive-code';
@@ -17,7 +18,9 @@ export default defineConfig({
     },
   },
   markdown: {
-    remarkPlugins: [remarkMermaid, remarkAlert],
+    processor: unified({
+      remarkPlugins: [remarkMermaid, remarkAlert],
+    }),
   },
   integrations: [
     expressiveCode({

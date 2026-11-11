@@ -8,10 +8,10 @@ Guidance for AI coding agents working in this repository.
 
 ## Tech Stack & Design System
 
-- **Framework:** Astro 5 (`output: 'static'`, Content Layer API via `src/content.config.ts`)
+- **Framework:** Astro (`output: 'static'`, Content Layer API via `src/content.config.ts`)
 - **Styling:** Tailwind CSS v4 (`@tailwindcss/vite`) in `src/styles/global.css`
 - **Visual Direction:** Warm editorial aesthetic — warm stone/alabaster header bands (`#f6f5f1`), crisp white reading canvas (`#ffffff`), deep warm charcoal ink (`#191817`), subtle `1px` hairlines (`#e4e2dc`), and indigo accents (`#3b5ccc`), with a matte warm-charcoal dark mode (`[data-theme="dark"]`). Avoid boxy neon cards, background grids, pulsing dots, or `//` cyberpunk labels.
-- **Diagrams:** Standard ` ```mermaid ` fenced code blocks transformed by `src/plugins/remark-mermaid.mjs` and rendered client-side by `src/components/MermaidRenderer.astro` (`mermaid@11`) with zoom/reset and fullscreen lightbox controls.
+- **Diagrams:** Standard ` ```mermaid ` fenced code blocks transformed by `src/plugins/remark-mermaid.mjs` and rendered client-side by `src/components/MermaidRenderer.astro` (`mermaid`) with zoom/reset and fullscreen lightbox controls.
 - **Code Blocks:** `astro-expressive-code` (`github-light-default` / `github-dark-default`, line wrapping enabled by default).
 - **Callouts:** GitHub-style blockquote alerts (`> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]`, `> [!CAUTION]`) via `remark-github-blockquote-alert`.
 - **Comments & Analytics:** Giscus (`src/components/Giscus.astro`) and Google Analytics GA4 (`G-L9PR34KNNJ` in `src/components/BaseHead.astro`).
@@ -69,7 +69,7 @@ description: "Concise 1-2 sentence summary for the article header, homepage feed
 
 ### Authoring Guidelines for AI Agents
 
-1. **Pure Markdown Only:** Do not use Hugo shortcodes (`{{< ... >}}`).
+1. **Pure Markdown Only:** Write standard Markdown using fenced code blocks and GitHub-style callouts.
 2. **Mermaid Diagrams:**
    - Use standard ` ```mermaid ` code fences.
    - Use `<br/>` (not literal `\n`) for multi-line labels inside flowchart nodes or sequence diagram notes (e.g., `S1["Line 1<br/>Line 2"]`).
@@ -85,7 +85,7 @@ description: "Concise 1-2 sentence summary for the article header, homepage feed
 - `src/utils/posts.ts` — `getVisiblePosts()` and `shouldIncludeDrafts()` helpers for draft-aware post loading
 - `src/utils/paths.ts` — `withBase()` helper prefixing internal URLs with `import.meta.env.BASE_URL` for PR preview compatibility
 - `src/plugins/remark-mermaid.mjs` — Remark plugin converting ` ```mermaid ` blocks into `.mermaid-wrapper` containers before Expressive Code runs
-- `src/components/MermaidRenderer.astro` — Client-side Mermaid v11 renderer with theme sync, zoom controls, and fullscreen modal
+- `src/components/MermaidRenderer.astro` — Client-side Mermaid renderer with theme sync, zoom controls, and fullscreen modal
 - `src/components/TableOfContents.astro` — Sticky right-hand `"On this page"` scrollspy rail
 - `src/components/PostCard.astro` — Editorial article entry with automatic opening-paragraph excerpt fallback
 - `src/components/CredlyGrid.astro` — Credly badge verification grid used on `/page/about/`

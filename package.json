@@ -3,7 +3,7 @@
   "type": "module",
   "version": "2.0.0",
   "private": true,
-  "description": "DevOps Field Notes — Personal engineering publication by Josh Wright",
+  "description": "Josh Wright — Notes on building products, platforms, and cloud infrastructure",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -13,16 +13,17 @@
     "test": "node --test tests/build-verification.test.mjs"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/rss": "^4.0.11",
-    "@astrojs/sitemap": "^3.3.0",
-    "@tailwindcss/vite": "^4.1.0",
-    "astro": "^5.6.0",
-    "astro-expressive-code": "^0.41.0",
-    "mermaid": "^11.4.1",
-    "remark-github-blockquote-alert": "^2.0.1",
-    "tailwindcss": "^4.1.0",
-    "typescript": "^5.8.0",
-    "unist-util-visit": "^5.0.0"
+    "@astrojs/check": "^0.9.12",
+    "@astrojs/markdown-remark": "^7.3.7",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "@tailwindcss/vite": "^4.3.5",
+    "astro": "^7.4.10",
+    "astro-expressive-code": "^0.44.3",
+    "mermaid": "^12.3.0",
+    "remark-github-blockquote-alert": "^2.1.0",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^6.0.3",
+    "unist-util-visit": "^5.2.0"
   }
 }

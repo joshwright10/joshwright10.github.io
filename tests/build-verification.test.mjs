@@ -11,8 +11,8 @@ function readDistFile(relativePath) {
   return fs.readFileSync(fullPath, 'utf-8');
 }
 
-describe('Astro 5 Production Build Verification', () => {
-  test('generates index, about, tags, RSS, sitemap, and all 4 preserved post routes', () => {
+describe('Astro Production Build Verification', () => {
+  test('generates index, about, tags, RSS, sitemap, and all 4 post routes', () => {
     const requiredFiles = [
       'index.html',
       'page/about/index.html',
@@ -30,7 +30,7 @@ describe('Astro 5 Production Build Verification', () => {
     }
   });
 
-  test('renders all 5 Mermaid diagrams across migrated posts as interactive .mermaid-wrapper blocks (not swallowed by Expressive Code)', () => {
+  test('renders all 5 Mermaid diagrams across posts as interactive .mermaid-wrapper blocks (not swallowed by Expressive Code)', () => {
     const dpHtml = readDistFile('posts/aspnet-data-protection-on-kubernetes/index.html');
     const dpMatches = dpHtml.match(/class="mermaid-wrapper/g) || [];
     assert.equal(
@@ -46,9 +46,6 @@ describe('Astro 5 Production Build Verification', () => {
       3,
       `Expected 3 Mermaid diagrams in azure-ai-search-managed-identity-sql-failover-groups, found ${searchMatches.length}`
     );
-
-    assert.ok(!dpHtml.includes('{{< mermaid >}}'), 'No raw Hugo mermaid shortcodes should remain');
-    assert.ok(!searchHtml.includes('{{< mermaid >}}'), 'No raw Hugo mermaid shortcodes should remain');
   });
 
   test('renders syntax-highlighted code blocks via Expressive Code', () => {
