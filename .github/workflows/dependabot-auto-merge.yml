@@ -35,8 +35,14 @@ jobs:
       - name: Build static site with Astro
         run: npm run build
 
-      - name: Run build verification suite
+      - name: Run static and headless browser E2E verification suite
         run: npm test
+
+      - name: Verify PR preview build mode (drafts + subpath base URL)
+        run: npm run build
+        env:
+          INCLUDE_DRAFTS: "true"
+          BASE_PATH: "/pr-preview/pr-test"
 
       - name: Approve and auto-merge PR
         run: |

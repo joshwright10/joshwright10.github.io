@@ -234,7 +234,10 @@ code, pre, kbd, samp {
 
 /* Tables */
 .studio-prose table {
+  display: block;
   width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
   border-collapse: collapse;
   margin: 2rem 0;
   font-size: 0.925rem;
