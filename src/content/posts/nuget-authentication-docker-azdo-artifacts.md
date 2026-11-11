@@ -5,10 +5,10 @@ draft: false
 tags: ["nuget", "azure-devops", "dotnet", "docker", "azure-devops-artifacts", "pipeline"]
 description: "Authenticate multi-stage .NET Docker builds against private Azure Artifacts NuGet feeds using the Azure Artifacts Credential Provider and pipeline job access tokens."
 ---
-When performing .NET Multi-stage builds within a Dockerfile, it may be required to restore some artifacts from an Azure DevOps Artifact Feed.
-I have previosuly seen this process being achieved by using the [Replace Tokens](https://marketplace.visualstudio.com/items?itemName=qetza.replacetokens) Azure DevOps Task to insert a PAT token into the Dockerfile during the build pipeline.
+When performing .NET multi-stage builds within a Dockerfile, it may be required to restore some artifacts from an Azure DevOps Artifact Feed.
+I have previously seen this process achieved by using the [Replace Tokens](https://marketplace.visualstudio.com/items?itemName=qetza.replacetokens) Azure DevOps Task to insert a Personal Access Token (PAT) into the `nuget.config` file during the build pipeline.
 
-This approach requires that you to update your `nuget.config` files to include a `<packageSourceCredentials></packageSourceCredentials>` section with a `Username` and `ClearTextPassword` key, then use token replacement for the value.
+This approach requires you to update your `nuget.config` files to include a `<packageSourceCredentials></packageSourceCredentials>` section with a `Username` and `ClearTextPassword` key, and then use token replacement for the values.
 
 #### Example `nuget.config` file with `packageSourceCredentials`
 
@@ -28,7 +28,7 @@ This approach requires that you to update your `nuget.config` files to include a
 </configuration>
 ```
 
-This is a valid approach, but when implimented with manually created PAT tokens stored in the Key Vault or Pipeline Library Variables, we see pipeline builds failing every 12 months once the PAT token expires. A better approach would be to use the Access Token of the Azure DevOps Build Service Account. Also with this approach, we see problems arise when trying to run Docker Builds locally, as the developer must manually perform the token replacement before running the Docker build and then ensure that they do not commit the updated nuget.config file containing the PAT token or updated username (essentially breaking the pipeline).
+This is a valid approach, but when implemented with manually created PATs stored in Key Vault or Pipeline Library Variables, we see pipeline builds failing every 12 months once the PAT expires. A better approach is to use the Access Token of the Azure DevOps Build Service Account. Also with the token replacement approach, problems arise when trying to run Docker builds locally, as the developer must manually perform the token replacement before running the Docker build and then ensure that they do not commit the updated `nuget.config` file containing the PAT or updated username (which would break the pipeline or leak credentials).
 
 ## Solution
 
@@ -37,7 +37,7 @@ We can create a more robust setup by utilising two components:
 - [Azure Artifacts Credential Provider](https://github.com/microsoft/artifacts-credprovider)
 - Azure DevOps Job Access Token
 
-Full documentation as to how to implement the [Azure Artifacts Credential Provider](https://github.com/microsoft/artifacts-credprovider) can be found here [Managing NuGet credentials in Docker scenarios](https://github.com/dotnet/dotnet-docker/blob/main/documentation/scenarios/nuget-credentials.md#using-the-azure-artifact-credential-provider). However the technique requires that you update your `Dockerfile` to install the credential provider using cURL and then pass in the Access Token and NuGet Username in as Docker parameters. These are then used to populate the `VSS_NUGET_EXTERNAL_FEED_ENDPOINTS` environment variable within the Dockerfile which NuGet will use. Multiple feeds can be added, as this is just a standard JSON array. Just be sure the escape the required characters.
+Full documentation on how to implement the [Azure Artifacts Credential Provider](https://github.com/microsoft/artifacts-credprovider) can be found in [Managing NuGet credentials in Docker scenarios](https://github.com/dotnet/dotnet-docker/blob/main/documentation/scenarios/nuget-credentials.md#using-the-azure-artifact-credential-provider). The technique requires that you update your `Dockerfile` to install the credential provider using cURL and then pass in the Access Token and NuGet Username as Docker build arguments. These are then used to populate the `VSS_NUGET_EXTERNAL_FEED_ENDPOINTS` environment variable within the Dockerfile, which NuGet will use via the credential provider. Multiple feeds can be added, as this is just a standard JSON array. Just be sure to escape the required characters.
 
 ```docker
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
@@ -68,7 +68,7 @@ COPY --from=build /app/out ./
 ENTRYPOINT ["dotnet", "dotnetapp.dll"]
 ```
 
-Now when we run Docker build we just need to pass in the argument `--build-arg FEED_ACCESSTOKEN=` during the pipeline. As for local docker builds, a developer will need to provide both the `FEED_ACCESSTOKEN` and `FEED_USERNAME` parameter which will be their Azure DevOps username.
+Now when we run `docker build`, we just need to pass in the argument `--build-arg FEED_ACCESSTOKEN=` during the pipeline. For local Docker builds, a developer can provide their PAT via `FEED_ACCESSTOKEN` and optionally pass their Azure DevOps username via `FEED_USERNAME` (the Azure Artifacts Credential Provider accepts any non-empty username when authenticating with a PAT or access token).
 
 ### Example Docker Build locally
 
@@ -78,16 +78,14 @@ docker build -t image/name:latest --build-arg FEED_ACCESSTOKEN=yjs2digmdwpdlefhi
 
 ## Docker Build Azure DevOps Pipeline Template
 
-In order to avoid defining many different variables in your pipeline template, it is possible to simply pass in an object. I add an input parameter named `additionalVariables` to all of my pipeline templates that use token replacement just in case a use case needs an extra variable quickly.
-
-Below you can see a sample Azure Pipeline template and the calling pipeline.
+Below you can see a sample Azure Pipeline template and the calling pipeline that authenticates with Azure Artifacts and passes the temporary job token into the Docker build.
 Many steps have been omitted to stay focused.
 
 ```yaml
 # template.yaml
 
 ################
-# AZDO Template for to create a Docker Container Image and upload to it ACR.
+# AZDO Template to create a Docker Container Image and upload it to ACR.
 #
 ################
 # Parameters
@@ -96,16 +94,11 @@ Many steps have been omitted to stay focused.
 # privateAgentPool
 #   (Optional) Name of the private Agent Pool to use.
 #   If empty, ubuntu-latest will be used.
-#   Default: AZDO-VMSS-LinuxAgentPool01. To override this, set the parameter to require pool name, or "" to use ubuntu-latest.
+#   Default: AZDO-VMSS-LinuxAgentPool01. To override this, set the parameter to the required pool name, or "" to use ubuntu-latest.
 #
 # dependsOnStage
 #   (Optional) List of stages that this template depends upon.
 #   Default: empty
-#
-# nugetConfigPath
-#   Optional path to the Nuget.Config file relative to the repo.
-#   Token replacement will be performed using the prefix and suffix '+++' if a path is provided.
-#   For example, if Nuget.Config is in the root, the path would be 'Nuget.Config'.
 #
 # imageTag
 #   (Optional) Value to tag the Docker image with.
@@ -113,33 +106,28 @@ Many steps have been omitted to stay focused.
 #
 # dockerCliVersion
 #   (Mandatory) Docker CLI Version to use.
-#   Default: null
+#   Default: ""
 #
 # dockerRegistryServiceConnection
-#   (Mandatory) Service Connection name in Azure DevOps to use to authenticate to Azure Container Repository.
-#   Default: null
+#   (Mandatory) Service Connection name in Azure DevOps to use to authenticate to Azure Container Registry.
+#   Default: ""
 #
 # imageRepository
 #   (Mandatory) Specifies the name of the repository.
-#   Default: null
+#   Default: ""
 #
 # dockerfilePath
-#   (Mandatory) Relative path to the Docker file.
-#   Default: null
+#   (Mandatory) Relative path to the Dockerfile.
+#   Default: ""
 #
 # buildContext
-#   (Mandatory) Specifies the path to the build context. Pass ** to indicate the directory that contains the Docker file.
+#   (Mandatory) Specifies the path to the build context. Pass ** to indicate the directory that contains the Dockerfile.
 #   Default: **
-#
-# nugetConfigPath
-#   (Optional) Specifies the relative path to NuGet.Config file.
-#   Specifying this parameter will trigger NuGet Authenticate and Token replacement depending on the other parameter values.
-#   Default: null
 #
 # nuGetServiceConnections
 #   (Optional) Comma-separated list of NuGet service connection names for feeds outside this organization or collection.
 #   For feeds in this organization or collection, leave this blank; the build's credentials are used automatically.
-#   Default: null
+#   Default: ""
 #
 # Changelog:
 #   1.0.0: November 2022, Initial Creation by Joshua Wright
@@ -160,22 +148,17 @@ parameters:
     default: ""
   - name: buildContext
     default: "**"
-  - name: nugetConfigPath
-    default: ""
   - name: imageTag
     default: "$(Build.BuildNumber)"
   - name: nuGetServiceConnections
     default: ""
-  - name: additionalVariables
-    type: object
-    default: {}
 
 stages:
   - stage: Docker_Build
     displayName: Build Docker and Push to ACR
     dependsOn: ${{ parameters.dependsOnStage }}
     variables:
-      imageTag: ${{ if parameters.imageTag }}
+      imageTag: ${{ parameters.imageTag }}
     jobs:
       - job: Docker_Build
         displayName: Docker Build and Push
@@ -186,7 +169,7 @@ stages:
             clean: all
         ${{ else }}:
           pool:
-            vmimage: "ubuntu-latest"
+            vmImage: "ubuntu-latest"
         steps:
           - checkout: self
             displayName: Checkout Self Repo
@@ -199,7 +182,7 @@ stages:
           - task: NuGetAuthenticate@1
             displayName: "Authenticate to NuGet"
             inputs:
-              nuGetServiceConnections: ${{ parameters.nugetServiceConnections }}
+              nuGetServiceConnections: ${{ parameters.nuGetServiceConnections }}
 
           - task: Docker@2
             displayName: Build image using Integrated NuGet Authentication
@@ -224,7 +207,7 @@ stages:
                 $(imageTag)
 ```
 
-We use the [NuGetAuthenticate@1](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/nuget-authenticate-v1?view=azure-pipelines) task, as this will populate the `VSS_NUGET_ACCESSTOKEN` variable on the build agent and also allow us to authenticate with external feeds if we wish. The `VSS_NUGET_ACCESSTOKEN` variable is later passed to the Docker Build task as the value for the `FEED_ACCESSTOKEN` parameter. Providing the task with an empty `nuGetServiceConnections` parameter just generates a token for feeds inside our organisation.
+We use the [NuGetAuthenticate@1](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/nuget-authenticate-v1?view=azure-pipelines) task, as this will populate the `VSS_NUGET_ACCESSTOKEN` variable on the build agent and also allow us to authenticate with external feeds if we wish. The `VSS_NUGET_ACCESSTOKEN` variable is later passed to the Docker Build task as the value for the `FEED_ACCESSTOKEN` build argument. Providing the task with an empty `nuGetServiceConnections` parameter generates a token for feeds inside our organisation.
 
 ```yaml
 # docker_build.yaml
@@ -235,7 +218,6 @@ stages:
       dockerRegistryServiceConnection: "dockerRegistryServiceConnection"
       imageRepository: "myapp"
       dockerfilePath: "Dockerfile" # Expects file in the repo: /Dockerfile
-      nugetConfigPath: "nuget.config" # Expects file in the repo: /nuget.config
 ```
 
 ```xml
