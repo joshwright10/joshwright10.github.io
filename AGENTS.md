@@ -55,12 +55,17 @@ description: "Concise 1-2 sentence summary for the article header, homepage feed
 
 ### Drafts & Pull Request Previews
 
-- **`draft: true` in Frontmatter:**
-  - Visible in local development (`npm run dev`) and in Pull Request preview builds (`INCLUDE_DRAFTS=true`) with a **`Draft Preview`** badge.
-  - Automatically excluded from production builds (`main` branch), RSS, and sitemap.
+- **Local & PR Draft Mode (`draft: true` in Frontmatter):**
+  - Controlled by `getVisiblePosts()` in `src/utils/posts.ts`.
+  - Posts with `draft: true` are automatically included when `import.meta.env.DEV` is true (`npm run dev`) or when `INCLUDE_DRAFTS="true"` is set (PR preview builds), displaying a **`Draft Preview`** badge on both `PostCard.astro` and `PostLayout.astro`.
+  - Automatically excluded from production builds (`main` branch), `/rss.xml`, and `sitemap-index.xml`.
 - **Live PR Preview URLs (`.github/workflows/pr-preview.yml`):**
-  - Opening or updating any Pull Request builds the site with `INCLUDE_DRAFTS=true` and `BASE_PATH=/pr-preview/pr-<number>`, deploys it to `https://joshwright10.github.io/pr-preview/pr-<number>/`, and posts a comment on the PR with the live preview URL.
-  - Closing or merging the PR automatically cleans up the preview folder.
+  - Opening, reopening, or pushing to any Pull Request builds the site with `INCLUDE_DRAFTS="true"` and `BASE_PATH="/pr-preview/pr-<number>"`, deploys `./dist` to the `gh-pages` branch under `pr-preview/pr-<number>/` via `rossjrw/pr-preview-action@v1`, and posts a comment on the PR with the live preview URL (`https://joshwright10.github.io/pr-preview/pr-<number>/`).
+  - Closing or merging the PR automatically deletes its `pr-preview/pr-<number>/` directory.
+  - Production deployments on `main` (`.github/workflows/deploy.yml`) publish `./dist` to `gh-pages` with `exclude_assets: "pr-preview"` so active PR previews are never overwritten.
+- **Base-Path-Aware Internal Links (`src/utils/paths.ts`):**
+  - Always wrap internal root-relative hrefs and asset paths (`/`, `/tags/`, `/page/about/`, `/posts/${slug}/`, `/rss.xml`, `/favicon.svg`) with `withBase(path)` from `src/utils/paths.ts` so navigation works both at `/` (production) and `/pr-preview/pr-<number>/` (PR previews).
+  - Always fetch post lists via `getVisiblePosts()` from `src/utils/posts.ts` rather than calling `getCollection('posts')` directly (except in `src/pages/rss.xml.js`, which intentionally excludes drafts).
 
 ### Authoring Guidelines for AI Agents
 
@@ -77,6 +82,8 @@ description: "Concise 1-2 sentence summary for the article header, homepage feed
 
 - `src/content/posts/` — Markdown blog articles
 - `src/content.config.ts` — Content collection schema
+- `src/utils/posts.ts` — `getVisiblePosts()` and `shouldIncludeDrafts()` helpers for draft-aware post loading
+- `src/utils/paths.ts` — `withBase()` helper prefixing internal URLs with `import.meta.env.BASE_URL` for PR preview compatibility
 - `src/plugins/remark-mermaid.mjs` — Remark plugin converting ` ```mermaid ` blocks into `.mermaid-wrapper` containers before Expressive Code runs
 - `src/components/MermaidRenderer.astro` — Client-side Mermaid v11 renderer with theme sync, zoom controls, and fullscreen modal
 - `src/components/TableOfContents.astro` — Tailscale-style right-hand `"On this page"` scrollspy rail
@@ -92,4 +99,4 @@ description: "Concise 1-2 sentence summary for the article header, homepage feed
 - `.github/workflows/deploy.yml` — GitHub Actions workflow validating PR builds and deploying `./dist` to the `gh-pages` branch on push to `main` (preserving `/pr-preview/`)
 - `.github/workflows/pr-preview.yml` — Deploys live PR previews (including `draft: true` posts) to `https://joshwright10.github.io/pr-preview/pr-<number>/` and comments the link on the PR
 - `.github/dependabot.yml` — Weekly grouped dependency checks (`npm` and `github-actions`, Mondays at 08:00 Europe/Madrid)
-- `.github/workflows/dependabot-auto-merge.yml` — Runs `npm ci`, `npm run build`, and `npm test` on Dependabot PRs and auto-approves/merges them when verification passes
+- `.github/workflows/dependabot-auto-merge.yml` — Runs `npm ci`, `npm run build`, and `npm test` on Dependabot PRs and auto-approves/merges them when verification passes (uses GitHub repository settings `allow_auto_merge: true`, `default_workflow_permissions: "write"`, and `can_approve_pull_request_reviews: true`)
