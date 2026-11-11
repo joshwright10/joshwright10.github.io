@@ -13,7 +13,7 @@ Token replacement can be extremely useful if you have lots of dynamic values tha
 First, a little background about the Replace Tokens task.  
 This task can substitute the values in text files with variables defined in your pipeline. It does this by looking for defined patterns, such as anything between `#{}#` or a custom pattern that you can define yourself. 
 
-This means that you could insert the value `#{myVariable}#` into your configuration file and the value of the Azure DevOps variable `myVariable` would be inserted when the Replace Tokens task runs. The are many configurable parameters with this task, and I encourage you to make yourself familiar with them. I particularly like to set `actionOnMissing` to `fail` as it is usually a mistake if I define a variable in the config file, but then forget to add it to Azure DevOps pipeline. I prefer for my pipeline to fail, rather than deploy with a value not correctly changed.
+This means that you could insert the value `#{myVariable}#` into your configuration file and the value of the Azure DevOps variable `myVariable` would be inserted when the Replace Tokens task runs. There are many configurable parameters with this task, and I encourage you to make yourself familiar with them. I particularly like to set `actionOnMissing` to `fail` as it is usually a mistake if I define a variable in the config file, but then forget to add it to the Azure DevOps pipeline. I prefer for my pipeline to fail, rather than deploy with a value not correctly changed.
 
 ## Variable Insertion in the Pipeline Template
 In order to avoid defining many different variables in your pipeline template, it is possible to simply pass in an object. I add an input parameter named `additionalVariables` to all of my pipeline templates that use token replacement just in case a use case needs an extra variable quickly.
@@ -35,14 +35,14 @@ parameters:
 stages:
   - stage: Deploy_To_AKS
     variables:
-      # This insert syntax creates a variable for each object in the map
+      # This insert syntax creates a variable for each key-value pair in the object
       ${{ insert }}: ${{ parameters.additionalVariables }}
       aksResourceGroup: ${{ parameters.aksResourceGroup }}
       aksClusterName: ${{ parameters.aksClusterName }}
     jobs:
       - job: Deploy
         pool:
-          vmimage: "ubuntu-latest"
+          vmImage: "ubuntu-latest"
         steps:
           - task: replacetokens@5
             displayName: "Replace Kubernetes Manifest Tokens"
@@ -63,13 +63,12 @@ stages:
     parameters:
       aksResourceGroup: "rg-dev01-aks"
       aksClusterName: "aks-dev01"
-      azureServiceConnection: "NonProd-Azure"
       additionalVariables:
         AppDynamicsTier: DEV01
         LogLevel: Debug
 ```
 
-This simple approach of adding an object parameter and the special `${{ insert }}` syntax to the template can make it much for flexible.
+This simple approach of adding an object parameter and the special `${{ insert }}` syntax to the template can make it much more flexible.
 
 ## Additional Reading
 - [Azure DevOps Template Insertion](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops#insertion)
