@@ -53,7 +53,7 @@ code, pre, kbd, samp {
   font-family: var(--font-mono);
 }
 
-/* Tailscale-inspired Editorial Prose */
+/* Editorial Prose */
 .studio-prose {
   color: var(--text-secondary);
   font-size: 1.0625rem;

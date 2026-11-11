@@ -66,10 +66,10 @@ const fullTitle =
 <meta property="twitter:title" content={fullTitle} />
 <meta property="twitter:description" content={description} />
 
-<!-- Theme Initialization (default light, like Tailscale) -->
+<!-- Theme Initialization -->
 <script is:inline>
   (function () {
-    const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('ts-theme') : null;
+    const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('jw-theme') : null;
     const theme = stored === 'light' || stored === 'dark' ? stored : 'light';
     document.documentElement.setAttribute('data-theme', theme);
   })();

@@ -15,17 +15,24 @@ const isAbout = pathname.includes('/page/about');
   <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
     <!-- Brand -->
     <div class="flex items-center gap-8">
-      <a href={homeHref} class="group flex items-center gap-3 text-[var(--text-primary)]">
-        <svg class="h-5 w-5 text-[var(--text-primary)]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <circle cx="3.5" cy="3.5" r="2" opacity="0.35" />
-          <circle cx="10" cy="3.5" r="2" />
-          <circle cx="16.5" cy="3.5" r="2" opacity="0.35" />
-          <circle cx="3.5" cy="10" r="2" />
-          <circle cx="10" cy="10" r="2" />
-          <circle cx="16.5" cy="10" r="2" />
-          <circle cx="3.5" cy="16.5" r="2" opacity="0.35" />
-          <circle cx="10" cy="16.5" r="2" />
-          <circle cx="16.5" cy="16.5" r="2" opacity="0.35" />
+      <a href={homeHref} class="group flex items-center gap-2.5 text-[var(--text-primary)]">
+        <svg class="h-7 w-7 shrink-0" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect width="64" height="64" rx="14" class="fill-[var(--text-primary)]" />
+          <path
+            d="M20.5 19v18a6.5 6.5 0 0 1-13 0v-1.5"
+            class="stroke-[var(--bg-canvas)]"
+            stroke-width="5.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M27.5 19l4.5 24.5 5-15.5 5 15.5L46.5 19"
+            class="stroke-[var(--bg-canvas)]"
+            stroke-width="5.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <circle cx="54" cy="41" r="3.4" class="fill-[var(--accent-primary)]" />
         </svg>
         <span class="text-base font-semibold tracking-tight text-[var(--text-primary)]">
           Josh Wright
@@ -133,7 +140,7 @@ const isAbout = pathname.includes('/page/about');
       const active = document.documentElement.getAttribute('data-theme') || 'light';
       const next = active === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('ts-theme', next);
+      localStorage.setItem('jw-theme', next);
       syncIcons(next);
       window.dispatchEvent(new CustomEvent('studio:theme-change', { detail: { theme: next } }));
     });

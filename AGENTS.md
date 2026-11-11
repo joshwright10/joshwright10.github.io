@@ -10,7 +10,7 @@ Guidance for AI coding agents working in this repository.
 
 - **Framework:** Astro 5 (`output: 'static'`, Content Layer API via `src/content.config.ts`)
 - **Styling:** Tailwind CSS v4 (`@tailwindcss/vite`) in `src/styles/global.css`
-- **Visual Direction:** Inspired by `tailscale.com/blog` — warm stone/alabaster header bands (`#f6f5f1`), crisp white reading canvas (`#ffffff`), deep warm charcoal ink (`#191817`), subtle `1px` hairlines (`#e4e2dc`), and indigo accents (`#3b5ccc`), with a matte warm-charcoal dark mode (`[data-theme="dark"]`). Avoid boxy neon cards, background grids, pulsing dots, or `//` cyberpunk labels.
+- **Visual Direction:** Warm editorial aesthetic — warm stone/alabaster header bands (`#f6f5f1`), crisp white reading canvas (`#ffffff`), deep warm charcoal ink (`#191817`), subtle `1px` hairlines (`#e4e2dc`), and indigo accents (`#3b5ccc`), with a matte warm-charcoal dark mode (`[data-theme="dark"]`). Avoid boxy neon cards, background grids, pulsing dots, or `//` cyberpunk labels.
 - **Diagrams:** Standard ` ```mermaid ` fenced code blocks transformed by `src/plugins/remark-mermaid.mjs` and rendered client-side by `src/components/MermaidRenderer.astro` (`mermaid@11`) with zoom/reset and fullscreen lightbox controls.
 - **Code Blocks:** `astro-expressive-code` (`github-light-default` / `github-dark-default`, line wrapping enabled by default).
 - **Callouts:** GitHub-style blockquote alerts (`> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]`, `> [!CAUTION]`) via `remark-github-blockquote-alert`.
@@ -86,7 +86,7 @@ description: "Concise 1-2 sentence summary for the article header, homepage feed
 - `src/utils/paths.ts` — `withBase()` helper prefixing internal URLs with `import.meta.env.BASE_URL` for PR preview compatibility
 - `src/plugins/remark-mermaid.mjs` — Remark plugin converting ` ```mermaid ` blocks into `.mermaid-wrapper` containers before Expressive Code runs
 - `src/components/MermaidRenderer.astro` — Client-side Mermaid v11 renderer with theme sync, zoom controls, and fullscreen modal
-- `src/components/TableOfContents.astro` — Tailscale-style right-hand `"On this page"` scrollspy rail
+- `src/components/TableOfContents.astro` — Sticky right-hand `"On this page"` scrollspy rail
 - `src/components/PostCard.astro` — Editorial article entry with automatic opening-paragraph excerpt fallback
 - `src/components/CredlyGrid.astro` — Credly badge verification grid used on `/page/about/`
 - `src/layouts/BaseLayout.astro` — Global page shell (`Header`, `Footer`, `SearchModal`)
